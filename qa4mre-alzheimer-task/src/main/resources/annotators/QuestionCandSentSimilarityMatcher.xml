@@ -42,7 +42,7 @@
       <nameValuePair>
         <name>SOLR_SERVER_URL</name>
         <value>
-          <string>http://ur.lti.cs.cmu.edu:8983/solr/</string>
+          <string>http://ur.lti.cs.cmu.edu:8964/solr/</string>
         </value>
       </nameValuePair>
       <nameValuePair>
