@@ -43,6 +43,9 @@ public class AnswerChoiceCandAnsSimilarityScorer extends JCasAnnotator_ImplBase 
 			System.out.println("Question: " + question.getText());
 			ArrayList<Answer> choiceList = Utils.fromFSListToCollection(qaSet
 					.get(i).getAnswerList(), Answer.class);
+			
+			//TODO: Serena: change choicelist to have whole sentences for each answer
+			
 			ArrayList<CandidateSentence> candSentList = Utils
 					.fromFSListToCollection(qaSet.get(i)
 							.getCandidateSentenceList(),
