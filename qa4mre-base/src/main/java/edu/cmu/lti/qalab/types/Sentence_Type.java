@@ -1,5 +1,5 @@
 
-/* First created by JCasGen Sun Feb 03 13:01:15 EST 2013 */
+/* First created by JCasGen Mon Nov 11 17:31:55 EST 2013 */
 package edu.cmu.lti.qalab.types;
 
 import org.apache.uima.jcas.JCas;
@@ -11,10 +11,10 @@ import org.apache.uima.cas.impl.TypeImpl;
 import org.apache.uima.cas.Type;
 import org.apache.uima.cas.impl.FeatureImpl;
 import org.apache.uima.cas.Feature;
-import org.apache.uima.jcas.tcas.Annotation_Type;
+import edu.cmu.cs.deiis.types.Annotation_Type;
 
 /** 
- * Updated by JCasGen Sun Nov 10 14:41:54 EST 2013
+ * Updated by JCasGen Mon Nov 11 17:31:55 EST 2013
  * @generated */
 public class Sentence_Type extends Annotation_Type {
   /** @generated */
