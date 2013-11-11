@@ -188,6 +188,37 @@ public class AnswerChoiceCandAnsSimilarityScorer extends JCasAnnotator_ImplBase 
 	    
 	    //QUESTION TYPE METHOD
 	    
+	    if(first.equals("What") && (!connectors.contains(qwords.get(1)))){
+		//Get maximal noun phrase
+		boolean npfound = false;
+		int x = 1;
+		String noun = qwords.get(x++);
+		if(npList.contains(noun))
+		    npfound = true;
+		String nextword = qwords.get(x);
+		while(((!npfound) || (npList.contains(noun + " " + nextword)))
+		    && (x < qwords.size())){
+		    noun += " " + nextword;
+		    x++;
+		    if((!npfound) && (npList.contains(noun)))
+			npfound = true;
+		    if(x < qwords.size())
+			nextword = qwords.get(x);
+		}//end while
+		String verb = qwords.get(x);
+		x++;
+		
+		if(!connectors.contains(verb)){
+		    String rest = "";
+		    for(int y=x; y<qwords.size(); y++)
+			rest += qwords.get(y) + " ";
+		    rest = rest.trim();
+		
+		    String constructed = a + " " + verb + " " + rest;
+		    return constructed;
+		}
+	    }
+	    
 	    //which + noun + is / what + noun + is
 	    //which, for which, in which, for what, in what
 	    if(first.equals("Which") || second.equals("which") 			// which / in which
