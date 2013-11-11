@@ -58,7 +58,7 @@ public class QuestionCandSentSimilarityMatcher  extends JCasAnnotator_ImplBase{
 		
 		for(int i=0;i<qaSet.size();i++){
 			
-			
+			//Set up Question object
 			Question question=qaSet.get(i).getQuestion();
 			System.out.println("========================================================");
 			System.out.println("Question: "+question.getText());
@@ -66,13 +66,16 @@ public class QuestionCandSentSimilarityMatcher  extends JCasAnnotator_ImplBase{
 			if(searchQuery.trim().equals("")){
 				continue;
 			}
+			
+			//Get Candidate Sentences from Solr
 			ArrayList<CandidateSentence>candidateSentList=new ArrayList<CandidateSentence>();
 			SolrQuery solrQuery=new SolrQuery();
 			solrQuery.add("fq", "docid:"+testDocId);
 			solrQuery.add("q",searchQuery);
 			solrQuery.add("rows",String.valueOf(TOP_SEARCH_RESULTS));
 			solrQuery.setFields("*", "score");
-			try {
+			try {	//Search for Candidate sentences
+			    	//TODO: change this to retrieve sets of sentences - all sets of sentences?
 				SolrDocumentList results=solrWrapper.runQuery(solrQuery, TOP_SEARCH_RESULTS);
 				for(int j=0;j<results.size();j++){
 					SolrDocument doc=results.get(j);					
@@ -86,13 +89,17 @@ public class QuestionCandSentSimilarityMatcher  extends JCasAnnotator_ImplBase{
 					Sentence annSentence=sentenceList.get(idx);
 					
 					String sentence=doc.get("text").toString();
-					double relScore=Double.parseDouble(doc.get("score").toString());
+					double relScore=Double.parseDouble(doc.get("score").toString()); //Where is this score coming from?
+					
+					//make new CandidateSentence object from results
 					CandidateSentence candSent=new CandidateSentence(aJCas);
 					candSent.setSentence(annSentence);
 					candSent.setRelevanceScore(relScore);
 					candidateSentList.add(candSent);
 					System.out.println(relScore+"\t"+sentence);
 				}
+				
+				//Add Candidate Sentence list to CAS
 				FSList fsCandidateSentList=Utils.fromCollectionToFSList(aJCas, candidateSentList);
 				fsCandidateSentList.addToIndexes();
 				qaSet.get(i).setCandidateSentenceList(fsCandidateSentList);
