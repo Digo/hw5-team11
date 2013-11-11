@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><casConsumerDescription xmlns="http://uima.apache.org/resourceSpecifier">
+<?xml version="1.0" encoding="UTF-8"?>
+
+<casConsumerDescription xmlns="http://uima.apache.org/resourceSpecifier">
   <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
   <implementationName>edu.cmu.lti.deiis.hw5.casconsumers.QA4MREResultCasConsumer</implementationName>
   <processingResourceMetaData>
@@ -25,7 +27,7 @@
       <nameValuePair>
         <name>OUTPUT_DIR</name>
         <value>
-          <string>results/12-test-alzheimer/</string>
+          <string>XMIs/12-test-alzheimer/</string>
         </value>
       </nameValuePair>
       <nameValuePair>
