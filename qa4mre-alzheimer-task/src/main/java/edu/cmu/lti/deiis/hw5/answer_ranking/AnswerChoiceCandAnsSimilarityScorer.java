@@ -23,12 +23,22 @@ import edu.cmu.lti.qalab.utils.Utils;
 public class AnswerChoiceCandAnsSimilarityScorer extends JCasAnnotator_ImplBase {
 
 	int K_CANDIDATES = 5;
+	protected static ArrayList<String> connectors;
 
 	@Override
 	public void initialize(UimaContext context)
 			throws ResourceInitializationException {
 		super.initialize(context);
 		K_CANDIDATES=(Integer)context.getConfigParameterValue("K_CANDIDATES");
+		
+		//connecting words for question/answer reconstruction
+		connectors = new ArrayList<String>();
+		connectors.add("do");
+		connectors.add("does");
+		connectors.add("did");
+		connectors.add("is");
+		connectors.add("was");
+		connectors.add("are");
 	}
 
 	@Override
@@ -47,7 +57,7 @@ public class AnswerChoiceCandAnsSimilarityScorer extends JCasAnnotator_ImplBase 
 			
 			//Question/Answer sentence reconstruction
 			for(Answer answer : choiceList){
-			    String recon = reconstruct(question.getText(), answer.getText());
+			    String recon = reconstruct(question, answer);
 			    System.out.println("Reconstructed: " + recon);
 			    answer.setText(recon);
 			}//end for
@@ -152,11 +162,11 @@ public class AnswerChoiceCandAnsSimilarityScorer extends JCasAnnotator_ImplBase 
 	 * @param a the answer text
 	 * @return the reconstructed sentence as a String
 	 */
-	public static String reconstruct(String q, String a){	
-	    String connectors = " do does did is was are ";
-	    
-	    //Strip punctuation
-	    q = q.trim().substring(0, q.length()-1);
+	public static String reconstruct(Question quest, Answer ans){	    
+	    //Get text
+	    String a = ans.getText();
+	    String q = quest.getText().substring(0, quest.getText().length()-1);
+	    q = q.replace('?', ' ').trim();
 	    
 	    //Set up tokenizer
 	    StringTokenizer tok = new StringTokenizer(q);
@@ -164,26 +174,39 @@ public class AnswerChoiceCandAnsSimilarityScorer extends JCasAnnotator_ImplBase 
 	    while(tok.hasMoreTokens())
 		qwords.add(tok.nextToken());
 	    String first = qwords.get(0);
+	    String second = qwords.get(1);
+	    
+	    //Get noun phrase list
+	    ArrayList<NounPhrase> qnpList = Utils.fromFSListToCollection(quest.getNounList(), NounPhrase.class);
+	    ArrayList<String> npList = new ArrayList<String>();
+	    for(NounPhrase np : qnpList)
+		npList.add(np.getText());
+	 /*   System.out.println("\tNounPhrases: " + npList.size());
+	    for(String s : npList)
+		System.out.println("\t" + s);
+		*/
 	    
 	    //QUESTION TYPE METHOD
-	    //which + noun + is / what + noun + is
 	    
+	    //which + noun + is / what + noun + is
 	    //which, for which, in which, for what, in what
-	    if(first.equals("Which") || qwords.get(1).equals("which") || (qwords.get(1).equals("what"))){
+	    if(first.equals("Which") || second.equals("which") 			// which / in which
+		    || (qwords.get(1).equals("what")) 					// for what / in what
+		    || (first.equals("What") && !connectors.contains(qwords.get(1)) )){ // what noun is ...
 		String noun = "";
 		
 		//Get connecting word
 		int x = 0;
 		String word = qwords.get(x++);
-		while(!connectors.contains(" " + word + " ") && (x < qwords.size())){
+		while(!connectors.contains(word) && (x < qwords.size())){
 		    word = qwords.get(x++);
 		    if(!(word.equals("which") || word.equals("Which") || word.equals("what")))
 			    noun += word + " ";
 		}
-		
 		String connector = word;
-		String rest = "";
 		
+		//get rest of sentence
+		String rest = "";
 		for(int y=x; y<qwords.size(); y++)
 		    rest += qwords.get(y) + " ";
 		rest = rest.trim();
@@ -192,6 +215,7 @@ public class AnswerChoiceCandAnsSimilarityScorer extends JCasAnnotator_ImplBase 
 		if(first.equals("For") || first.equals("In"))
 		    connector = first.toLowerCase();
 		
+		//construct sentence
 		String constructed;
 		if(connector.equals("do") || connector.equals("does"))
 		    constructed = a + " " + rest;
@@ -205,20 +229,49 @@ public class AnswerChoiceCandAnsSimilarityScorer extends JCasAnnotator_ImplBase 
 	    else if(first.equals("Where")){
 		String connector = qwords.get(1);
 		
-		//TODO: where connector NP [verb ...] = rest
-		String noun = qwords.get(2); 	//TEMP - noun could be multiple words
+		//Get maximal noun phrase
+		boolean npfound = false;
+		int x = 2;
+		String noun = qwords.get(x++);
+		if(npList.contains(noun))
+		    npfound = true;
+		String nextword = qwords.get(x);
+		while( ((!npfound) || (npList.contains(noun + " " + nextword))) && (x < qwords.size())){
+		    noun += " " + nextword;
+		    x++;
+		    if((!npfound) && (npList.contains(noun)))
+			    npfound = true;
+		    if(x < qwords.size())
+			nextword = qwords.get(x);
+		}
+		//System.out.println("Found NP: " + noun);
+		
+		//Get rest of sentence
 		String rest = "";
-		for(int x=3; x<qwords.size(); x++)
-		    rest += qwords.get(x) + " ";
+		for(int y=x; y<qwords.size(); y++)
+		    rest += qwords.get(y) + " ";
 		rest = rest.trim();
 		
+		//construct sentence
 		String constructed = noun + " " + connector + " " + rest + " in " + a;
 		return constructed;
 	    }//end where
 	    
 	    //how does
 	    
-	    //what + noun
+	    //what is noun?
+	    else if(first.equals("What") && (second.equals("is") || second.equals("are") || second.equals("was")) ){
+		String connector = second;
+		String rest = "";
+		for(int x=2; x<qwords.size(); x++)
+		    rest += qwords.get(x) + " ";
+		rest = rest.trim();
+		
+		String constructed = a + " " + connector + " " + rest;
+		return constructed;
+	    }
+	    
+	    //what noun verbs?
 	    
 	    //NAIVE METHOD
 	    return q + " " + a;
