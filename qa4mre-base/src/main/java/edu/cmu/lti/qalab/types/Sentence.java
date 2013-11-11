@@ -1,6 +1,6 @@
 
 
-/* First created by JCasGen Sun Feb 03 13:01:15 EST 2013 */
+/* First created by JCasGen Mon Nov 11 17:31:55 EST 2013 */
 package edu.cmu.lti.qalab.types;
 
 import org.apache.uima.jcas.JCas; 
@@ -8,12 +8,12 @@ import org.apache.uima.jcas.JCasRegistry;
 import org.apache.uima.jcas.cas.TOP_Type;
 
 import org.apache.uima.jcas.cas.FSList;
-import org.apache.uima.jcas.tcas.Annotation;
+import edu.cmu.cs.deiis.types.Annotation;
 
 
 /** 
- * Updated by JCasGen Sun Nov 10 14:41:54 EST 2013
- * XML source: F:/eclipse/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
+ * Updated by JCasGen Mon Nov 11 17:31:55 EST 2013
+ * XML source: /home/diwang/deiis/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
  * @generated */
 public class Sentence extends Annotation {
   /** @generated

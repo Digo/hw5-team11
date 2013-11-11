@@ -11,10 +11,6 @@ import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.cas.FSList;
 import org.apache.uima.jcas.tcas.Annotation;
 
-
-
-
-import sun.tools.tree.IfStatement;
 import edu.cmu.lti.qalab.types.NSentence;
 import edu.cmu.lti.qalab.types.Sentence;
 import edu.cmu.lti.deiis.hw5.utils.Utils;
