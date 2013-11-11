@@ -258,6 +258,38 @@ public class AnswerChoiceCandAnsSimilarityScorer extends JCasAnnotator_ImplBase 
 	    }//end where
 	    
 	    //how does
+	    else if(first.equals("How") && (second.equals("does") || second.equals("do") || second.equals("did")) ){
+		String connector = second;
+		
+		//Get maximal noun phrase
+		boolean npfound = false;
+		int x = 2;
+		String noun = qwords.get(x++);
+		if(npList.contains(noun))
+		    npfound = true;
+		String nextword = qwords.get(x);
+		while(((!npfound) || (npList.contains(noun + " " + nextword)))
+		    && (x < qwords.size())){
+		    noun += " " + nextword;
+		    x++;
+		    if((!npfound) && (npList.contains(noun)))
+			npfound = true;
+		    if(x < qwords.size())
+			nextword = qwords.get(x);
+		}//end while
+		String verb = qwords.get(x);
+		x++;
+		if(connector.equals("does"))
+		    verb += "s";
+		
+		String rest = "";
+		for(int y=x; y<qwords.size(); y++)
+		    rest += qwords.get(y) + " ";
+		rest = rest.trim();
+		
+		String constructed = noun + " " + verb + " " + rest + " " + a;
+		return constructed;
+	    }
 	    
 	    //what is noun?
 	    else if(first.equals("What") && (second.equals("is") || second.equals("are") || second.equals("was")) ){
