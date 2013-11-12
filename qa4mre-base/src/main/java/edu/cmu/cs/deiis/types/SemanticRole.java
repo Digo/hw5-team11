@@ -1,6 +1,6 @@
 
 
-/* First created by JCasGen Mon Nov 11 17:31:31 EST 2013 */
+/* First created by JCasGen Mon Nov 11 22:12:38 EST 2013 */
 package edu.cmu.cs.deiis.types;
 
 import org.apache.uima.jcas.JCas; 
@@ -8,12 +8,11 @@ import org.apache.uima.jcas.JCasRegistry;
 import org.apache.uima.jcas.cas.TOP_Type;
 
 import org.apache.uima.jcas.cas.FSArray;
-import org.apache.uima.jcas.tcas.Annotation;
 
 
 /** An ASSERT predicate-target-argument annotation. See the
           Feature attribute to find out more.
- * Updated by JCasGen Mon Nov 11 17:31:55 EST 2013
+ * Updated by JCasGen Mon Nov 11 22:22:56 EST 2013
  * XML source: /home/diwang/deiis/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
  * @generated */
 public class SemanticRole extends Annotation {
@@ -156,24 +155,6 @@ public class SemanticRole extends Annotation {
       jcasType.jcas.throwFeatMissing("Children", "edu.cmu.cs.deiis.types.SemanticRole");
     jcasType.jcas.checkArrayBounds(jcasType.ll_cas.ll_getRefValue(addr, ((SemanticRole_Type)jcasType).casFeatCode_Children), i);
     jcasType.ll_cas.ll_setRefArrayValue(jcasType.ll_cas.ll_getRefValue(addr, ((SemanticRole_Type)jcasType).casFeatCode_Children), i, jcasType.ll_cas.ll_getFSRef(v));}
-   
-    
-  //*--------------*
-  //* Feature: ComponentID
-
-  /** getter for ComponentID - gets 
-   * @generated */
-  public String getComponentID() {
-    if (SemanticRole_Type.featOkTst && ((SemanticRole_Type)jcasType).casFeat_ComponentID == null)
-      jcasType.jcas.throwFeatMissing("ComponentID", "edu.cmu.cs.deiis.types.SemanticRole");
-    return jcasType.ll_cas.ll_getStringValue(addr, ((SemanticRole_Type)jcasType).casFeatCode_ComponentID);}
-    
-  /** setter for ComponentID - sets  
-   * @generated */
-  public void setComponentID(String v) {
-    if (SemanticRole_Type.featOkTst && ((SemanticRole_Type)jcasType).casFeat_ComponentID == null)
-      jcasType.jcas.throwFeatMissing("ComponentID", "edu.cmu.cs.deiis.types.SemanticRole");
-    jcasType.ll_cas.ll_setStringValue(addr, ((SemanticRole_Type)jcasType).casFeatCode_ComponentID, v);}    
   }
 
     

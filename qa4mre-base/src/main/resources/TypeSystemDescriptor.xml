@@ -7,8 +7,7 @@
   <types>
   		<typeDescription>
 				<name>edu.cmu.cs.deiis.types.Annotation</name>
-				<description>Extend uima.tcas.Annotation by adding componentId field
-				</description>
+				<description>Extend uima.tcas.Annotation by adding componentId field</description>
 				<supertypeName>uima.tcas.Annotation</supertypeName>
 				<features>
 					<featureDescription>
@@ -26,43 +25,34 @@
 			<typeDescription>
 				<name>edu.cmu.cs.deiis.types.SemanticRole</name>
 				<description>An ASSERT predicate-target-argument annotation. See the
-					Feature attribute to find out more.
-				</description>
-				<supertypeName>uima.tcas.Annotation</supertypeName>
+					Feature attribute to find out more.</description>
+				<supertypeName>edu.cmu.cs.deiis.types.Annotation</supertypeName>
 				<features>
 					<featureDescription>
 						<name>Label</name>
 						<description>Semantic role played by the predicate argument or
-							target
-						</description>
+							target</description>
 						<rangeTypeName>uima.cas.String</rangeTypeName>
 					</featureDescription>
 					<featureDescription>
 						<name>sequenceNumber</name>
 						<description>This is necessary to work around the default sorting
 							within
-							the CAS. We'll keep our own sort order, thankyouverymuch.
-						</description>
+							the CAS. We'll keep our own sort order, thankyouverymuch.</description>
 						<rangeTypeName>uima.cas.Integer</rangeTypeName>
 					</featureDescription>
 					<featureDescription>
 						<name>Parent</name>
-						<description>Link to parent ("TARGET") role annotation
-						</description>
+						<description>Link to parent ("TARGET") role annotation</description>
 						<rangeTypeName>edu.cmu.cs.deiis.types.SemanticRole</rangeTypeName>
 					</featureDescription>
 					<featureDescription>
 						<name>Children</name>
-						<description />
+						<description/>
 						<rangeTypeName>uima.cas.FSArray</rangeTypeName>
 						<elementType>edu.cmu.cs.deiis.types.SemanticRole</elementType>
 					</featureDescription>
-					<featureDescription>
-						<name>ComponentID</name>
-						<description />
-						<rangeTypeName>uima.cas.String</rangeTypeName>
-					</featureDescription>
-				</features>
+					</features>
 			</typeDescription>
   
     <typeDescription>
@@ -113,6 +103,12 @@
           <description/>
           <rangeTypeName>uima.cas.FSList</rangeTypeName>
           <elementType>edu.cmu.lti.qalab.types.NER</elementType>
+        </featureDescription>
+      <featureDescription>
+          <name>srlArray</name>
+          <description>Sematic Role Labels related to this sentence</description>
+          <rangeTypeName>uima.cas.FSArray</rangeTypeName>
+          <elementType>edu.cmu.cs.deiis.types.SemanticRole</elementType>
         </featureDescription>
       </features>
     </typeDescription>

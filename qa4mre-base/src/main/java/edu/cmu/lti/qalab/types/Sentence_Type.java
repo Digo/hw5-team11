@@ -14,7 +14,7 @@ import org.apache.uima.cas.Feature;
 import edu.cmu.cs.deiis.types.Annotation_Type;
 
 /** 
- * Updated by JCasGen Mon Nov 11 17:31:55 EST 2013
+ * Updated by JCasGen Mon Nov 11 22:22:56 EST 2013
  * @generated */
 public class Sentence_Type extends Annotation_Type {
   /** @generated */
@@ -187,6 +187,43 @@ public class Sentence_Type extends Annotation_Type {
     ll_cas.ll_setRefValue(addr, casFeatCode_nerList, v);}
     
   
+ 
+  /** @generated */
+  final Feature casFeat_srlArray;
+  /** @generated */
+  final int     casFeatCode_srlArray;
+  /** @generated */ 
+  public int getSrlArray(int addr) {
+        if (featOkTst && casFeat_srlArray == null)
+      jcas.throwFeatMissing("srlArray", "edu.cmu.lti.qalab.types.Sentence");
+    return ll_cas.ll_getRefValue(addr, casFeatCode_srlArray);
+  }
+  /** @generated */    
+  public void setSrlArray(int addr, int v) {
+        if (featOkTst && casFeat_srlArray == null)
+      jcas.throwFeatMissing("srlArray", "edu.cmu.lti.qalab.types.Sentence");
+    ll_cas.ll_setRefValue(addr, casFeatCode_srlArray, v);}
+    
+   /** @generated */
+  public int getSrlArray(int addr, int i) {
+        if (featOkTst && casFeat_srlArray == null)
+      jcas.throwFeatMissing("srlArray", "edu.cmu.lti.qalab.types.Sentence");
+    if (lowLevelTypeChecks)
+      return ll_cas.ll_getRefArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_srlArray), i, true);
+    jcas.checkArrayBounds(ll_cas.ll_getRefValue(addr, casFeatCode_srlArray), i);
+  return ll_cas.ll_getRefArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_srlArray), i);
+  }
+   
+  /** @generated */ 
+  public void setSrlArray(int addr, int i, int v) {
+        if (featOkTst && casFeat_srlArray == null)
+      jcas.throwFeatMissing("srlArray", "edu.cmu.lti.qalab.types.Sentence");
+    if (lowLevelTypeChecks)
+      ll_cas.ll_setRefArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_srlArray), i, v, true);
+    jcas.checkArrayBounds(ll_cas.ll_getRefValue(addr, casFeatCode_srlArray), i);
+    ll_cas.ll_setRefArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_srlArray), i, v);
+  }
+ 
 
 
 
@@ -227,6 +264,10 @@ public class Sentence_Type extends Annotation_Type {
  
     casFeat_nerList = jcas.getRequiredFeatureDE(casType, "nerList", "uima.cas.FSList", featOkTst);
     casFeatCode_nerList  = (null == casFeat_nerList) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_nerList).getCode();
+
+ 
+    casFeat_srlArray = jcas.getRequiredFeatureDE(casType, "srlArray", "uima.cas.FSArray", featOkTst);
+    casFeatCode_srlArray  = (null == casFeat_srlArray) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_srlArray).getCode();
 
   }
 }

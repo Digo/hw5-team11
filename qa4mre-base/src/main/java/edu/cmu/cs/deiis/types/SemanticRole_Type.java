@@ -1,5 +1,5 @@
 
-/* First created by JCasGen Mon Nov 11 17:31:31 EST 2013 */
+/* First created by JCasGen Mon Nov 11 22:12:38 EST 2013 */
 package edu.cmu.cs.deiis.types;
 
 import org.apache.uima.jcas.JCas;
@@ -11,11 +11,10 @@ import org.apache.uima.cas.impl.TypeImpl;
 import org.apache.uima.cas.Type;
 import org.apache.uima.cas.impl.FeatureImpl;
 import org.apache.uima.cas.Feature;
-import org.apache.uima.jcas.tcas.Annotation_Type;
 
 /** An ASSERT predicate-target-argument annotation. See the
           Feature attribute to find out more.
- * Updated by JCasGen Mon Nov 11 17:31:55 EST 2013
+ * Updated by JCasGen Mon Nov 11 22:22:56 EST 2013
  * @generated */
 public class SemanticRole_Type extends Annotation_Type {
   /** @generated */
@@ -135,24 +134,6 @@ public class SemanticRole_Type extends Annotation_Type {
     ll_cas.ll_setRefArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_Children), i, v);
   }
  
- 
-  /** @generated */
-  final Feature casFeat_ComponentID;
-  /** @generated */
-  final int     casFeatCode_ComponentID;
-  /** @generated */ 
-  public String getComponentID(int addr) {
-        if (featOkTst && casFeat_ComponentID == null)
-      jcas.throwFeatMissing("ComponentID", "edu.cmu.cs.deiis.types.SemanticRole");
-    return ll_cas.ll_getStringValue(addr, casFeatCode_ComponentID);
-  }
-  /** @generated */    
-  public void setComponentID(int addr, String v) {
-        if (featOkTst && casFeat_ComponentID == null)
-      jcas.throwFeatMissing("ComponentID", "edu.cmu.cs.deiis.types.SemanticRole");
-    ll_cas.ll_setStringValue(addr, casFeatCode_ComponentID, v);}
-    
-  
 
 
 
@@ -177,10 +158,6 @@ public class SemanticRole_Type extends Annotation_Type {
  
     casFeat_Children = jcas.getRequiredFeatureDE(casType, "Children", "uima.cas.FSArray", featOkTst);
     casFeatCode_Children  = (null == casFeat_Children) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_Children).getCode();
-
- 
-    casFeat_ComponentID = jcas.getRequiredFeatureDE(casType, "ComponentID", "uima.cas.String", featOkTst);
-    casFeatCode_ComponentID  = (null == casFeat_ComponentID) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_ComponentID).getCode();
 
   }
 }

@@ -7,12 +7,14 @@ import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.JCasRegistry;
 import org.apache.uima.jcas.cas.TOP_Type;
 
+import org.apache.uima.jcas.cas.FSArray;
+import edu.cmu.cs.deiis.types.SemanticRole;
 import org.apache.uima.jcas.cas.FSList;
 import edu.cmu.cs.deiis.types.Annotation;
 
 
 /** 
- * Updated by JCasGen Mon Nov 11 17:31:55 EST 2013
+ * Updated by JCasGen Mon Nov 11 22:22:56 EST 2013
  * XML source: /home/diwang/deiis/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
  * @generated */
 public class Sentence extends Annotation {
@@ -205,6 +207,40 @@ public class Sentence extends Annotation {
     if (Sentence_Type.featOkTst && ((Sentence_Type)jcasType).casFeat_nerList == null)
       jcasType.jcas.throwFeatMissing("nerList", "edu.cmu.lti.qalab.types.Sentence");
     jcasType.ll_cas.ll_setRefValue(addr, ((Sentence_Type)jcasType).casFeatCode_nerList, jcasType.ll_cas.ll_getFSRef(v));}    
+   
+    
+  //*--------------*
+  //* Feature: srlArray
+
+  /** getter for srlArray - gets Sematic Role Labels related to this sentence
+   * @generated */
+  public FSArray getSrlArray() {
+    if (Sentence_Type.featOkTst && ((Sentence_Type)jcasType).casFeat_srlArray == null)
+      jcasType.jcas.throwFeatMissing("srlArray", "edu.cmu.lti.qalab.types.Sentence");
+    return (FSArray)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((Sentence_Type)jcasType).casFeatCode_srlArray)));}
+    
+  /** setter for srlArray - sets Sematic Role Labels related to this sentence 
+   * @generated */
+  public void setSrlArray(FSArray v) {
+    if (Sentence_Type.featOkTst && ((Sentence_Type)jcasType).casFeat_srlArray == null)
+      jcasType.jcas.throwFeatMissing("srlArray", "edu.cmu.lti.qalab.types.Sentence");
+    jcasType.ll_cas.ll_setRefValue(addr, ((Sentence_Type)jcasType).casFeatCode_srlArray, jcasType.ll_cas.ll_getFSRef(v));}    
+    
+  /** indexed getter for srlArray - gets an indexed value - Sematic Role Labels related to this sentence
+   * @generated */
+  public SemanticRole getSrlArray(int i) {
+    if (Sentence_Type.featOkTst && ((Sentence_Type)jcasType).casFeat_srlArray == null)
+      jcasType.jcas.throwFeatMissing("srlArray", "edu.cmu.lti.qalab.types.Sentence");
+    jcasType.jcas.checkArrayBounds(jcasType.ll_cas.ll_getRefValue(addr, ((Sentence_Type)jcasType).casFeatCode_srlArray), i);
+    return (SemanticRole)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefArrayValue(jcasType.ll_cas.ll_getRefValue(addr, ((Sentence_Type)jcasType).casFeatCode_srlArray), i)));}
+
+  /** indexed setter for srlArray - sets an indexed value - Sematic Role Labels related to this sentence
+   * @generated */
+  public void setSrlArray(int i, SemanticRole v) { 
+    if (Sentence_Type.featOkTst && ((Sentence_Type)jcasType).casFeat_srlArray == null)
+      jcasType.jcas.throwFeatMissing("srlArray", "edu.cmu.lti.qalab.types.Sentence");
+    jcasType.jcas.checkArrayBounds(jcasType.ll_cas.ll_getRefValue(addr, ((Sentence_Type)jcasType).casFeatCode_srlArray), i);
+    jcasType.ll_cas.ll_setRefArrayValue(jcasType.ll_cas.ll_getRefValue(addr, ((Sentence_Type)jcasType).casFeatCode_srlArray), i, jcasType.ll_cas.ll_getFSRef(v));}
   }
 
     
