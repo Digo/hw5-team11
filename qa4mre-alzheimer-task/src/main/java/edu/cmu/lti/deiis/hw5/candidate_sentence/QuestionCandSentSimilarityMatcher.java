@@ -86,7 +86,7 @@ public class QuestionCandSentSimilarityMatcher  extends JCasAnnotator_ImplBase{
 		ArrayList<Sentence>sentenceList=Utils.getSentenceListFromTestDocCAS(aJCas);
 		ArrayList<QuestionAnswerSet>qaSet=Utils.getQuestionAnswerSetFromTestDocCAS(aJCas);
 		
-		srlSanityCheck(aJCas);
+//		srlSanityCheck(aJCas);
 		
 		for(int i=0;i<qaSet.size();i++){
 			

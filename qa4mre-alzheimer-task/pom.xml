@@ -21,6 +21,11 @@
     </snapshotRepository>
   </distributionManagement>
   <dependencies>
+	<dependency>
+		<groupId>com.sun</groupId>
+		<artifactId>tools</artifactId>
+		<version>1.5.0</version>
+	</dependency>
     <dependency>
       <groupId>edu.cmu.lti.qalab</groupId>
       <artifactId>qa4mre-base</artifactId>
