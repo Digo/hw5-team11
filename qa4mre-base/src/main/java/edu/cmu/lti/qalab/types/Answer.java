@@ -12,8 +12,8 @@ import org.apache.uima.jcas.tcas.Annotation;
 
 
 /** 
- * Updated by JCasGen Mon Nov 11 17:31:55 EST 2013
- * XML source: /home/diwang/deiis/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
+ * Updated by JCasGen Tue Nov 12 11:36:42 EST 2013
+ * XML source: /Users/xiaohua/git/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
  * @generated */
 public class Answer extends Annotation {
   /** @generated
@@ -259,6 +259,96 @@ public class Answer extends Annotation {
     if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_dependencies == null)
       jcasType.jcas.throwFeatMissing("dependencies", "edu.cmu.lti.qalab.types.Answer");
     jcasType.ll_cas.ll_setRefValue(addr, ((Answer_Type)jcasType).casFeatCode_dependencies, jcasType.ll_cas.ll_getFSRef(v));}    
+   
+    
+  //*--------------*
+  //* Feature: reconText
+
+  /** getter for reconText - gets 
+   * @generated */
+  public String getReconText() {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_reconText == null)
+      jcasType.jcas.throwFeatMissing("reconText", "edu.cmu.lti.qalab.types.Answer");
+    return jcasType.ll_cas.ll_getStringValue(addr, ((Answer_Type)jcasType).casFeatCode_reconText);}
+    
+  /** setter for reconText - sets  
+   * @generated */
+  public void setReconText(String v) {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_reconText == null)
+      jcasType.jcas.throwFeatMissing("reconText", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.ll_cas.ll_setStringValue(addr, ((Answer_Type)jcasType).casFeatCode_reconText, v);}    
+   
+    
+  //*--------------*
+  //* Feature: reconTokenList
+
+  /** getter for reconTokenList - gets 
+   * @generated */
+  public FSList getReconTokenList() {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_reconTokenList == null)
+      jcasType.jcas.throwFeatMissing("reconTokenList", "edu.cmu.lti.qalab.types.Answer");
+    return (FSList)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_reconTokenList)));}
+    
+  /** setter for reconTokenList - sets  
+   * @generated */
+  public void setReconTokenList(FSList v) {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_reconTokenList == null)
+      jcasType.jcas.throwFeatMissing("reconTokenList", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.ll_cas.ll_setRefValue(addr, ((Answer_Type)jcasType).casFeatCode_reconTokenList, jcasType.ll_cas.ll_getFSRef(v));}    
+   
+    
+  //*--------------*
+  //* Feature: reconNounPhraseList
+
+  /** getter for reconNounPhraseList - gets 
+   * @generated */
+  public FSList getReconNounPhraseList() {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_reconNounPhraseList == null)
+      jcasType.jcas.throwFeatMissing("reconNounPhraseList", "edu.cmu.lti.qalab.types.Answer");
+    return (FSList)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_reconNounPhraseList)));}
+    
+  /** setter for reconNounPhraseList - sets  
+   * @generated */
+  public void setReconNounPhraseList(FSList v) {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_reconNounPhraseList == null)
+      jcasType.jcas.throwFeatMissing("reconNounPhraseList", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.ll_cas.ll_setRefValue(addr, ((Answer_Type)jcasType).casFeatCode_reconNounPhraseList, jcasType.ll_cas.ll_getFSRef(v));}    
+   
+    
+  //*--------------*
+  //* Feature: reconDependencies
+
+  /** getter for reconDependencies - gets 
+   * @generated */
+  public FSList getReconDependencies() {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_reconDependencies == null)
+      jcasType.jcas.throwFeatMissing("reconDependencies", "edu.cmu.lti.qalab.types.Answer");
+    return (FSList)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_reconDependencies)));}
+    
+  /** setter for reconDependencies - sets  
+   * @generated */
+  public void setReconDependencies(FSList v) {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_reconDependencies == null)
+      jcasType.jcas.throwFeatMissing("reconDependencies", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.ll_cas.ll_setRefValue(addr, ((Answer_Type)jcasType).casFeatCode_reconDependencies, jcasType.ll_cas.ll_getFSRef(v));}    
+   
+    
+  //*--------------*
+  //* Feature: reconNERList
+
+  /** getter for reconNERList - gets 
+   * @generated */
+  public FSList getReconNERList() {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_reconNERList == null)
+      jcasType.jcas.throwFeatMissing("reconNERList", "edu.cmu.lti.qalab.types.Answer");
+    return (FSList)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_reconNERList)));}
+    
+  /** setter for reconNERList - sets  
+   * @generated */
+  public void setReconNERList(FSList v) {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_reconNERList == null)
+      jcasType.jcas.throwFeatMissing("reconNERList", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.ll_cas.ll_setRefValue(addr, ((Answer_Type)jcasType).casFeatCode_reconNERList, jcasType.ll_cas.ll_getFSRef(v));}    
   }
 
     
