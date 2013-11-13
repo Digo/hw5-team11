@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><analysisEngineDescription xmlns="http://uima.apache.org/resourceSpecifier">
+<?xml version="1.0" encoding="UTF-8"?>
+
+<analysisEngineDescription xmlns="http://uima.apache.org/resourceSpecifier">
   <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
   <primitive>false</primitive>
   <delegateAnalysisEngineSpecifiers>
@@ -41,7 +43,7 @@
         <!-- <node>QuestionCandSentDependencyMatcher</node>-->
         <node>AnswerChoiceCandAnsSimilarityScorer</node>
         <!-- <node>AnswerChoiceCandAnsSynonymScorer</node>-->
-        <!--<node>AnswerChoiceCandAnsPMIScorer</node>-->
+        <node>AnswerChoiceCandAnsPMIScorer</node>
         <node>AnswerSelectionByKCandVoting</node>
       </fixedFlow>
     </flowConstraints>

@@ -3,7 +3,9 @@ package edu.cmu.lti.deiis.hw5.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
+import org.apache.uima.cas.CASRuntimeException;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.cas.EmptyFSList;
 import org.apache.uima.jcas.cas.EmptyStringList;
@@ -18,7 +20,6 @@ import org.uimafit.util.JCasUtil;
 public class Utils {
 	public static <T extends TOP> ArrayList<T> fromFSListToCollection(FSList list,
 			Class<T> classType) {
-
 	
 		Collection<T> myCollection = JCasUtil.select(list, classType);
 		/*
@@ -72,6 +73,5 @@ public class Utils {
 		return list;
 	}
 
-	
-
+  
 }
