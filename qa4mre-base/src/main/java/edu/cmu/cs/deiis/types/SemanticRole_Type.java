@@ -15,7 +15,7 @@ import org.apache.uima.jcas.tcas.Annotation_Type;
 
 /** An ASSERT predicate-target-argument annotation. See the
           Feature attribute to find out more.
- * Updated by JCasGen Tue Nov 12 11:36:42 EST 2013
+ * Updated by JCasGen Wed Nov 13 11:09:42 EST 2013
  * @generated */
 public class SemanticRole_Type extends Annotation_Type {
   /** @generated */

@@ -79,12 +79,12 @@
       <fixedFlow>
         <node>TextSegmenter</node>
         <node>StanfordSentenceAnnotator</node>
-        <node>NSentenceAnnotator</node>
         <node>NoiseFilter</node>
         <node>StanfordNLPAnnotator</node>
         <node>StanfordQuestionNLPAnnotator</node>
         <node>PhraseAnnotator</node>
         <node>QuestionPhraseAnnotator</node>
+        <node>NSentenceAnnotator</node>
         <node>NEAnnotator</node>
         <!-- <node>SynonymAnnotator</node>-->
         <!-- <node>QASynonymAnnotator</node>-->

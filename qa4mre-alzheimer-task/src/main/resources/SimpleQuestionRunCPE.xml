@@ -31,6 +31,9 @@
   <delegateAnalysisEngine key="AnswerChoiceBaselineScorer">
       <import name="annotators.AnswerChoiceBaselineScorer"/>
     </delegateAnalysisEngine>
+  <delegateAnalysisEngine key="AnswerSelectionByLinearInterp">
+      <import name="annotators.AnswerSelectionByLinearInterp"/>
+    </delegateAnalysisEngine>
   </delegateAnalysisEngineSpecifiers>
   <analysisEngineMetaData>
     <name>CpeQuestionDescriptor</name>
@@ -47,7 +50,7 @@
         <node>AnswerChoiceBaselineScorer</node>
         <!-- <node>AnswerChoiceCandAnsSynonymScorer</node>-->
         <node>AnswerChoiceCandAnsPMIScorer</node>
-        <node>AnswerSelectionByKCandVoting</node>
+        <node>AnswerSelectionByLinearInterp</node>
       </fixedFlow>
     </flowConstraints>
     <typePriorities/>

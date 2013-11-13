@@ -14,7 +14,7 @@ import org.apache.uima.cas.Feature;
 import org.apache.uima.jcas.tcas.Annotation_Type;
 
 /** 
- * Updated by JCasGen Tue Nov 12 11:36:42 EST 2013
+ * Updated by JCasGen Wed Nov 13 11:09:43 EST 2013
  * @generated */
 public class NSentence_Type extends Annotation_Type {
   /** @generated */
@@ -79,6 +79,42 @@ public class NSentence_Type extends Annotation_Type {
     ll_cas.ll_setStringValue(addr, casFeatCode_text, v);}
     
   
+ 
+  /** @generated */
+  final Feature casFeat_tokenList;
+  /** @generated */
+  final int     casFeatCode_tokenList;
+  /** @generated */ 
+  public int getTokenList(int addr) {
+        if (featOkTst && casFeat_tokenList == null)
+      jcas.throwFeatMissing("tokenList", "edu.cmu.lti.qalab.types.NSentence");
+    return ll_cas.ll_getRefValue(addr, casFeatCode_tokenList);
+  }
+  /** @generated */    
+  public void setTokenList(int addr, int v) {
+        if (featOkTst && casFeat_tokenList == null)
+      jcas.throwFeatMissing("tokenList", "edu.cmu.lti.qalab.types.NSentence");
+    ll_cas.ll_setRefValue(addr, casFeatCode_tokenList, v);}
+    
+  
+ 
+  /** @generated */
+  final Feature casFeat_phraseList;
+  /** @generated */
+  final int     casFeatCode_phraseList;
+  /** @generated */ 
+  public int getPhraseList(int addr) {
+        if (featOkTst && casFeat_phraseList == null)
+      jcas.throwFeatMissing("phraseList", "edu.cmu.lti.qalab.types.NSentence");
+    return ll_cas.ll_getRefValue(addr, casFeatCode_phraseList);
+  }
+  /** @generated */    
+  public void setPhraseList(int addr, int v) {
+        if (featOkTst && casFeat_phraseList == null)
+      jcas.throwFeatMissing("phraseList", "edu.cmu.lti.qalab.types.NSentence");
+    ll_cas.ll_setRefValue(addr, casFeatCode_phraseList, v);}
+    
+  
 
 
 
@@ -95,6 +131,14 @@ public class NSentence_Type extends Annotation_Type {
  
     casFeat_text = jcas.getRequiredFeatureDE(casType, "text", "uima.cas.String", featOkTst);
     casFeatCode_text  = (null == casFeat_text) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_text).getCode();
+
+ 
+    casFeat_tokenList = jcas.getRequiredFeatureDE(casType, "tokenList", "uima.cas.FSList", featOkTst);
+    casFeatCode_tokenList  = (null == casFeat_tokenList) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_tokenList).getCode();
+
+ 
+    casFeat_phraseList = jcas.getRequiredFeatureDE(casType, "phraseList", "uima.cas.FSList", featOkTst);
+    casFeatCode_phraseList  = (null == casFeat_phraseList) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_phraseList).getCode();
 
   }
 }

@@ -12,7 +12,7 @@ import org.apache.uima.jcas.tcas.Annotation;
 
 
 /** 
- * Updated by JCasGen Tue Nov 12 11:36:42 EST 2013
+ * Updated by JCasGen Wed Nov 13 11:09:43 EST 2013
  * XML source: /Users/xiaohua/git/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
  * @generated */
 public class NSentence extends Annotation {
@@ -97,6 +97,42 @@ public class NSentence extends Annotation {
     if (NSentence_Type.featOkTst && ((NSentence_Type)jcasType).casFeat_text == null)
       jcasType.jcas.throwFeatMissing("text", "edu.cmu.lti.qalab.types.NSentence");
     jcasType.ll_cas.ll_setStringValue(addr, ((NSentence_Type)jcasType).casFeatCode_text, v);}    
+   
+    
+  //*--------------*
+  //* Feature: tokenList
+
+  /** getter for tokenList - gets 
+   * @generated */
+  public FSList getTokenList() {
+    if (NSentence_Type.featOkTst && ((NSentence_Type)jcasType).casFeat_tokenList == null)
+      jcasType.jcas.throwFeatMissing("tokenList", "edu.cmu.lti.qalab.types.NSentence");
+    return (FSList)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((NSentence_Type)jcasType).casFeatCode_tokenList)));}
+    
+  /** setter for tokenList - sets  
+   * @generated */
+  public void setTokenList(FSList v) {
+    if (NSentence_Type.featOkTst && ((NSentence_Type)jcasType).casFeat_tokenList == null)
+      jcasType.jcas.throwFeatMissing("tokenList", "edu.cmu.lti.qalab.types.NSentence");
+    jcasType.ll_cas.ll_setRefValue(addr, ((NSentence_Type)jcasType).casFeatCode_tokenList, jcasType.ll_cas.ll_getFSRef(v));}    
+   
+    
+  //*--------------*
+  //* Feature: phraseList
+
+  /** getter for phraseList - gets 
+   * @generated */
+  public FSList getPhraseList() {
+    if (NSentence_Type.featOkTst && ((NSentence_Type)jcasType).casFeat_phraseList == null)
+      jcasType.jcas.throwFeatMissing("phraseList", "edu.cmu.lti.qalab.types.NSentence");
+    return (FSList)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((NSentence_Type)jcasType).casFeatCode_phraseList)));}
+    
+  /** setter for phraseList - sets  
+   * @generated */
+  public void setPhraseList(FSList v) {
+    if (NSentence_Type.featOkTst && ((NSentence_Type)jcasType).casFeat_phraseList == null)
+      jcasType.jcas.throwFeatMissing("phraseList", "edu.cmu.lti.qalab.types.NSentence");
+    jcasType.ll_cas.ll_setRefValue(addr, ((NSentence_Type)jcasType).casFeatCode_phraseList, jcasType.ll_cas.ll_getFSRef(v));}    
   }
 
     

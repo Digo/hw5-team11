@@ -1,6 +1,7 @@
 package edu.cmu.lti.deiis.hw5.answer_ranking;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,10 +17,13 @@ import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.cas.FSList;
 import org.apache.uima.jcas.cas.TOP;
+import org.apache.uima.jcas.cas.DoubleArray;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.uimafit.util.JCasUtil;
 
 import edu.cmu.lti.qalab.types.Answer;
 import edu.cmu.lti.qalab.types.NER;
+import edu.cmu.lti.qalab.types.NSentence;
 import edu.cmu.lti.qalab.types.NounPhrase;
 import edu.cmu.lti.qalab.types.Question;
 import edu.cmu.lti.qalab.types.QuestionAnswerSet;
@@ -29,12 +33,14 @@ import edu.cmu.lti.qalab.utils.Utils;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.trees.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
 import edu.stanford.nlp.trees.semgraph.SemanticGraphEdge;
+import edu.stanford.nlp.util.CoreMap;
 import abner.Tagger;
 
 public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
@@ -74,8 +80,13 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
   public void process(JCas aJCas) throws AnalysisEngineProcessException {
     // TestDocument testDoc = Utils.getTestDocumentFromCAS(aJCas);
     // String testDocId = testDoc.getId();
+    System.out.println("Calculating baseline scores...");
     ArrayList<QuestionAnswerSet> qaSet = Utils.getQuestionAnswerSetFromTestDocCAS(aJCas);
-    ArrayList<Sentence> sentenceList = Utils.getSentenceListFromTestDocCAS(aJCas);
+    Collection<NSentence> nSentenceCollection = JCasUtil.select(aJCas, NSentence.class);
+//    for (NSentence nSentence: nSentenceCollection){
+//      System.out.println(nSentence.getPhraseList());
+//    }
+
 
     // for (Sentence sentence : sentenceList) {
     // System.out.println(sentence.getText());
@@ -90,29 +101,32 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     // }
 
     for (int i = 0; i < qaSet.size(); i++) {
-      System.out.println("========================================================");
+//      System.out.println("========================================================");
       Question question = qaSet.get(i).getQuestion();
-      System.out.println("Question: " + question.getText());
+//      System.out.println("Question: " + question.getText());
       ArrayList<Answer> choiceList = Utils.fromFSListToCollection(qaSet.get(i).getAnswerList(),
               Answer.class);
 
       for (Answer answer : choiceList) {
         try {
           String recon = reconstruct(question, answer);
-          System.out.println(recon);
+//          System.out.println(recon);
           answer.setReconText(recon);
 
           String nerTagged = abnerTagger.tagABNER(recon);
           ArrayList<NER> abnerList = Utils.extractNER(nerTagged, aJCas);
           FSList fsNERList = Utils.createNERList(aJCas, abnerList);
-          answer.setNerList(fsNERList);
+          answer.setReconNERList(fsNERList);
 
           Annotation document = new Annotation(recon);
           // System.out.println("Entering stanford annotation");
           stanfordAnnotator.annotate(document);
 
           ArrayList<Token> tokenList = new ArrayList<Token>();
-          for (CoreLabel token : document.get(TokensAnnotation.class)) {
+          // System.out.println(recon);
+          // System.out.println(tokenList);
+          CoreMap annotatedSent = document.get(SentencesAnnotation.class).get(0);
+          for (CoreLabel token : annotatedSent.get(TokensAnnotation.class)) {
             String originalText = token.originalText();
             // this is the POS tag of the token
             String pos = token.get(PartOfSpeechAnnotation.class);
@@ -131,143 +145,48 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
           answer.setReconNounPhraseList(fsPhraseList);
 
           // this is the Stanford dependency graph of the reconstructed answer
-          SemanticGraph dependencies = document
+          SemanticGraph dependencies = annotatedSent
                   .get(CollapsedCCProcessedDependenciesAnnotation.class);
-          // System.out.println(dependencies);
           List<SemanticGraphEdge> depList = dependencies.edgeListSorted();
           FSList fsDependencyList = Utils.createDependencyList(aJCas, depList);
           answer.setReconDependencies(fsDependencyList);
 
           // compute similarity between each reconstructed answer and testDoc sentence
           List<Double> similarity = new ArrayList<Double>();
-          for (Sentence docSentence : sentenceList) {
-            // ArrayList<NounPhrase> sentNPList = Utils.fromFSListToCollection(
-            // docSentence.getPhraseList(), NounPhrase.class);
-            // ArrayList<Dependency> sentDepList = Utils.fromFSListToCollection(
-            // docSentence.getDependencyList(), Dependency.class);
-            similarity = getSim(answer, docSentence, similarity);
+          for (NSentence nSentence : nSentenceCollection) {
+            
+            similarity = getSim(answer, nSentence, similarity);
           }
+          DoubleArray simArray = new DoubleArray(aJCas, similarity.size());
           for (int j = 0; j < similarity.size(); j++) {
-            similarity.set(j, similarity.get(j) / sentenceList.size());
+            simArray.set(j, similarity.get(j) / nSentenceCollection.size());
           }
-          // System.out.println(similarity);
-
+          answer.setBaselineScore(simArray);
+//          System.out.println(simArray);
           // System.out.println("Out of stanford annotation");
         } catch (Exception e) {
           e.printStackTrace();
           return;
         }
-
-        // System.out.println("Reconstructed: " + recon);
-
-        // double cosineSim = getCosine(recon, )
-        System.out.println("========================================================");
+//        System.out.println("========================================================");
       }
-      // ArrayList<CandidateSentence> candSentList = Utils
-      // .fromFSListToCollection(qaSet.get(i)
-      // .getCandidateSentenceList(),
-      // CandidateSentence.class);
-      //
-      // int topK = Math.min(K_CANDIDATES, candSentList.size());
-      // for (int c = 0; c < topK; c++) {
-      //
-      // CandidateSentence candSent = candSentList.get(c);
-      //
-      // ArrayList<NounPhrase> candSentNouns = Utils
-      // .fromFSListToCollection(candSent.getSentence()
-      // .getPhraseList(), NounPhrase.class);
-      // ArrayList<NER> candSentNers = Utils.fromFSListToCollection(
-      // candSent.getSentence().getNerList(), NER.class);
-      //
-      // ArrayList<CandidateAnswer> candAnsList = new ArrayList<CandidateAnswer>();
-      // for (int j = 0; j < choiceList.size(); j++) {
-      //
-      // Answer answer = choiceList.get(j);
-      // ArrayList<NounPhrase> choiceNouns = Utils
-      // .fromFSListToCollection(answer.getNounPhraseList(),
-      // NounPhrase.class);
-      // ArrayList<NER> choiceNERs = Utils.fromFSListToCollection(
-      // answer.getNerList(), NER.class);
-      //
-      // int nnMatch = 0;
-      // for (int k = 0; k < candSentNouns.size(); k++) {
-      // for (int l = 0; l < choiceNERs.size(); l++) {
-      // if (candSentNouns.get(k).getText()
-      // .contains(choiceNERs.get(l).getText())) {
-      // nnMatch++;
-      // }
-      // }
-      // for (int l = 0; l < choiceNouns.size(); l++) {
-      // if (candSentNouns.get(k).getText()
-      // .contains(choiceNouns.get(l).getText())) {
-      // nnMatch++;
-      // }
-      // }
-      // }
-      //
-      // for (int k = 0; k < candSentNers.size(); k++) {
-      // for (int l = 0; l < choiceNERs.size(); l++) {
-      // if (candSentNouns.get(k).getText()
-      // .contains(choiceNERs.get(l).getText())) {
-      // nnMatch++;
-      // }
-      // }
-      // for (int l = 0; l < choiceNouns.size(); l++) {
-      // if (candSentNouns.get(k).getText()
-      // .contains(choiceNouns.get(l).getText())) {
-      // nnMatch++;
-      // }
-      // }
-      //
-      // }
-      //
-      // System.out.println(choiceList.get(j).getText() + "\t"
-      // + nnMatch);
-      // CandidateAnswer candAnswer = null;
-      // if (candSent.getCandAnswerList() == null) {
-      // candAnswer = new CandidateAnswer(aJCas);
-      // } else {
-      // candAnswer = Utils.fromFSListToCollection(
-      // candSent.getCandAnswerList(),
-      // CandidateAnswer.class).get(j);// new
-      // // CandidateAnswer(aJCas);;
-      //
-      // }
-      // candAnswer.setText(answer.getText());
-      // candAnswer.setQId(answer.getQuestionId());
-      // candAnswer.setChoiceIndex(j);
-      // candAnswer.setSimilarityScore(nnMatch);
-      // candAnsList.add(candAnswer);
-      // }
-      //
-      // FSList fsCandAnsList = Utils.fromCollectionToFSList(aJCas,
-      // candAnsList);
-      // candSent.setCandAnswerList(fsCandAnsList);
-      // candSentList.set(c, candSent);
-
     }
-
-    // System.out
-    // .println("================================================");
-    // FSList fsCandSentList = Utils.fromCollectionToFSList(aJCas,
-    // candSentList);
-    // qaSet.get(i).setCandidateSentenceList(fsCandSentList);
-    //
-    // }
-    // FSList fsQASet = Utils.fromCollectionToFSList(aJCas, qaSet);
-    // testDoc.setQaList(fsQASet);
   }
 
-  private List<Double> getSim(Answer answer, Sentence docSentence, List<Double> similarity) {
+  private List<Double> getSim(Answer answer, NSentence nSentence, List<Double> similarity) {
     List<Double> resultList = new ArrayList<Double>();
     HashMap<String, Integer> answerNPCountMap = getTFMap(answer.getReconNounPhraseList(), "text");
-    HashMap<String, Integer> docSentNPCountMap = getTFMap(docSentence.getPhraseList(), "text");
-
+    HashMap<String, Integer> docSentNPCountMap = getTFMap(nSentence.getPhraseList(), "text");
+    
+    HashMap<String, Integer> answerTokenCountMap = getTFMap(answer.getReconTokenList(), "text");
+    HashMap<String, Integer> docSentTokenCountMap = getTFMap(nSentence.getTokenList(), "text");
+    
+    
     // HashMap<String, Integer> answerDepCountMap = getTFMap(answer.getReconDependencies());
     // HashMap<String, Integer> docSentDepCountMap = getTFMap(docSentence.getDependencyList());
 
-    HashMap<String, Integer> answerNERCountMap = getTFMap(answer.getReconNERList(), "tag");
-    HashMap<String, Integer> docSentNERCountMap = getTFMap(docSentence.getNerList(), "tag");
+    // HashMap<String, Integer> answerNERCountMap = getTFMap(answer.getReconNERList(), "tag");
+    // HashMap<String, Integer> docSentNERCountMap = getTFMap(docSentence.getNerList(), "tag");
 
     double npCosineSim = getCosine(answerNPCountMap, docSentNPCountMap);
     double npDiceSim = getDice(answerNPCountMap, docSentNPCountMap);
@@ -275,24 +194,27 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     resultList.add(npCosineSim);
     resultList.add(npDiceSim);
     resultList.add(npJaccardSim);
+    
+    
+     double tokenConsineSim = getCosine(answerTokenCountMap, docSentTokenCountMap);
+     double tokenDiceSim = getDice(answerTokenCountMap, docSentTokenCountMap);
+     double tokenJaccardSim = getJaccard(answerTokenCountMap, docSentTokenCountMap);
+     resultList.add(tokenConsineSim);
+     resultList.add(tokenDiceSim);
+     resultList.add(tokenJaccardSim);
 
-    // double depConsineSim = getCosine(answerDepCountMap, docSentDepCountMap);
-    // double depDiceSim = getDice(answerDepCountMap, docSentDepCountMap);
-    // double depJaccardSim = getJaccard(answerDepCountMap, docSentDepCountMap);
-    // resultList.add(depConsineSim);
-    // resultList.add(depDiceSim);
-    // resultList.add(depJaccardSim);
-
-    double nerCosineSim = getCosine(answerNERCountMap, docSentNERCountMap);
-    double nerDiceSim = getDice(answerNERCountMap, docSentNERCountMap);
-    double nerJaccardSim = getJaccard(answerNERCountMap, docSentNERCountMap);
-    resultList.add(nerCosineSim);
-    resultList.add(nerDiceSim);
-    resultList.add(nerJaccardSim);
+    // double nerCosineSim = getCosine(answerNERCountMap, docSentNERCountMap);
+    // double nerDiceSim = getDice(answerNERCountMap, docSentNERCountMap);
+    // double nerJaccardSim = getJaccard(answerNERCountMap, docSentNERCountMap);
+    // resultList.add(nerCosineSim);
+    // resultList.add(nerDiceSim);
+    // resultList.add(nerJaccardSim);
 
     try {
       for (int i = 0; i < resultList.size(); i++) {
-        resultList.set(i, resultList.get(i) + similarity.get(i));
+        if (!similarity.isEmpty()) {
+          resultList.set(i, resultList.get(i) + similarity.get(i));
+        }
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -320,9 +242,9 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
         match++;
       }
     }
-    Set<String> set1 = tfMap1.keySet();
-    set1.addAll(tfMap2.keySet());
-    return (double) match / (set1.size());
+    Set<String> union = new HashSet<String>(tfMap1.keySet());
+    union.addAll(tfMap2.keySet());
+    return (double) match / (union.size());
   }
 
   private double getCosine(HashMap<String, Integer> tfMap1, HashMap<String, Integer> tfMap2) {

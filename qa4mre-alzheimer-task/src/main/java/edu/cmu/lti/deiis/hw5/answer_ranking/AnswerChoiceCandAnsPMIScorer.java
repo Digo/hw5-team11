@@ -55,11 +55,11 @@ public class AnswerChoiceCandAnsPMIScorer extends JCasAnnotator_ImplBase {
 		//String testDocId = testDoc.getId();
 		ArrayList<QuestionAnswerSet> qaSet = Utils
 				.getQuestionAnswerSetFromTestDocCAS(aJCas);
-
+		System.out.println("Calculating PMI scores...");
 		for (int i = 0; i < qaSet.size(); i++) {
 
 			Question question = qaSet.get(i).getQuestion();
-			System.out.println("Question: " + question.getText());
+//			System.out.println("Question: " + question.getText());
 			ArrayList<Answer> choiceList = Utils.fromFSListToCollection(qaSet
 					.get(i).getAnswerList(), Answer.class);
 			ArrayList<CandidateSentence> candSentList = Utils
@@ -103,10 +103,10 @@ public class AnswerChoiceCandAnsPMIScorer extends JCasAnnotator_ImplBase {
 						}
 
 					}
-
-					System.out.println(choiceList.get(j).getText() + "\t"
-							+ score1 + "\t" + ((score1)));
-
+					choiceList.get(j).setPMIscore(score1);
+//					System.out.println(choiceList.get(j).getText() + "\t"
+//							+ score1 + "\t" + ((score1)) + "\t");
+					
 					CandidateAnswer candAnswer=null;
 					if(candSent.getCandAnswerList()==null){
 						candAnswer=new CandidateAnswer(aJCas);
@@ -124,8 +124,8 @@ public class AnswerChoiceCandAnsPMIScorer extends JCasAnnotator_ImplBase {
 				candSentList.set(c, candSent);
 			}
 
-			System.out
-					.println("================================================");
+//			System.out
+//					.println("================================================");
 			FSList fsCandSentList=Utils.fromCollectionToFSList(aJCas, candSentList);
 			qaSet.get(i).setCandidateSentenceList(fsCandSentList);
 

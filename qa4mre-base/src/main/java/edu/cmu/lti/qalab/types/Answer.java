@@ -11,8 +11,11 @@ import org.apache.uima.jcas.cas.FSList;
 import org.apache.uima.jcas.tcas.Annotation;
 
 
+import org.apache.uima.jcas.cas.DoubleArray;
+
+
 /** 
- * Updated by JCasGen Tue Nov 12 11:36:42 EST 2013
+ * Updated by JCasGen Wed Nov 13 11:09:42 EST 2013
  * XML source: /Users/xiaohua/git/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
  * @generated */
 public class Answer extends Annotation {
@@ -349,6 +352,58 @@ public class Answer extends Annotation {
     if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_reconNERList == null)
       jcasType.jcas.throwFeatMissing("reconNERList", "edu.cmu.lti.qalab.types.Answer");
     jcasType.ll_cas.ll_setRefValue(addr, ((Answer_Type)jcasType).casFeatCode_reconNERList, jcasType.ll_cas.ll_getFSRef(v));}    
+   
+    
+  //*--------------*
+  //* Feature: baselineScore
+
+  /** getter for baselineScore - gets 
+   * @generated */
+  public DoubleArray getBaselineScore() {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_baselineScore == null)
+      jcasType.jcas.throwFeatMissing("baselineScore", "edu.cmu.lti.qalab.types.Answer");
+    return (DoubleArray)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_baselineScore)));}
+    
+  /** setter for baselineScore - sets  
+   * @generated */
+  public void setBaselineScore(DoubleArray v) {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_baselineScore == null)
+      jcasType.jcas.throwFeatMissing("baselineScore", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.ll_cas.ll_setRefValue(addr, ((Answer_Type)jcasType).casFeatCode_baselineScore, jcasType.ll_cas.ll_getFSRef(v));}    
+    
+  /** indexed getter for baselineScore - gets an indexed value - 
+   * @generated */
+  public double getBaselineScore(int i) {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_baselineScore == null)
+      jcasType.jcas.throwFeatMissing("baselineScore", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.jcas.checkArrayBounds(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_baselineScore), i);
+    return jcasType.ll_cas.ll_getDoubleArrayValue(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_baselineScore), i);}
+
+  /** indexed setter for baselineScore - sets an indexed value - 
+   * @generated */
+  public void setBaselineScore(int i, double v) { 
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_baselineScore == null)
+      jcasType.jcas.throwFeatMissing("baselineScore", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.jcas.checkArrayBounds(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_baselineScore), i);
+    jcasType.ll_cas.ll_setDoubleArrayValue(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_baselineScore), i, v);}
+   
+    
+  //*--------------*
+  //* Feature: PMIscore
+
+  /** getter for PMIscore - gets 
+   * @generated */
+  public double getPMIscore() {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_PMIscore == null)
+      jcasType.jcas.throwFeatMissing("PMIscore", "edu.cmu.lti.qalab.types.Answer");
+    return jcasType.ll_cas.ll_getDoubleValue(addr, ((Answer_Type)jcasType).casFeatCode_PMIscore);}
+    
+  /** setter for PMIscore - sets  
+   * @generated */
+  public void setPMIscore(double v) {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_PMIscore == null)
+      jcasType.jcas.throwFeatMissing("PMIscore", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.ll_cas.ll_setDoubleValue(addr, ((Answer_Type)jcasType).casFeatCode_PMIscore, v);}    
   }
 
     

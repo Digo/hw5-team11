@@ -1,82 +1,91 @@
 package edu.cmu.lti.deiis.hw5.annotators;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
-import org.apache.uima.cas.FSIterator;
-import org.apache.uima.cas.text.AnnotationIndex;
 import org.apache.uima.jcas.JCas;
-import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.cas.FSList;
+import org.apache.uima.jcas.cas.TOP;
 import org.apache.uima.jcas.tcas.Annotation;
 
 import edu.cmu.lti.qalab.types.NSentence;
+import edu.cmu.lti.qalab.types.NounPhrase;
+import edu.cmu.lti.qalab.types.Token;
 import edu.cmu.lti.qalab.types.Sentence;
-import edu.cmu.lti.deiis.hw5.utils.Utils;
+import edu.cmu.lti.qalab.utils.Utils;
 
 public class NSentenceAnnotator extends JCasAnnotator_ImplBase {
 
   @Override
   public void process(JCas jCas) throws AnalysisEngineProcessException {
-    // TODO Auto-generated method stub
-    System.out.println("Processing N-Sentence");
-    AnnotationIndex<Annotation> sIndex = jCas.getAnnotationIndex(Sentence.type);
-    FSIterator<Annotation> sIterator = sIndex.iterator();
-    getNSentence(jCas, 3, sIterator);
+    getNSentence(jCas, 3);
   }
-  
-  public void getNSentence(JCas jCas, int k,  FSIterator<Annotation> sIterator){
+
+  public void getNSentence(JCas jCas, int k) {
+    ArrayList<Sentence> sentList = Utils.getSentenceListFromTestDocCAS(jCas);
     ArrayList<Sentence> sentArray = new ArrayList<Sentence>();
+    int index = 0;
     int i = 0;
-    while(sIterator.hasNext() && i < k){
-      Sentence sent = (Sentence)sIterator.next();
+    String NSentString = "";
+    int sentNum = sentList.size();
+    List<ArrayList<Token>> tokenList = new ArrayList<ArrayList<Token>>();
+    List<ArrayList<NounPhrase>> phraseList = new ArrayList<ArrayList<NounPhrase>>();
+    
+    while (index < sentNum && i < k) {
+      Sentence sent = sentList.get(index);
+      tokenList.add(Utils.fromFSListToCollection(sent.getTokenList(), Token.class));
+      phraseList.add(Utils.fromFSListToCollection(sent.getPhraseList(), NounPhrase.class));
+      if (index == 0) {
+        NSentString = NSentString + sent.getText();
+      } else {
+        NSentString = NSentString + " " + sent.getText();
+      }
       sentArray.add(sent);
-      i++;     
+      index++;
+      i++;
     }
-    if(i < k)
+    if (i < k)
       return;
-    
-    boolean ifNSent = true;
-    for(i = 0; i < k - 1;i++){
-      if((sentArray.get(i + 1).getBegin() - sentArray.get(i).getEnd()) > 1){
-        ifNSent = false;
-        break;
-      }
-    }
-    if(ifNSent){
-      NSentence nSent = new NSentence(jCas);
-      FSList sentList = Utils.fromCollectionToFSList(jCas,sentArray);
-      nSent.setSentenceList(sentList);
-      nSent.setBegin(sentArray.get(0).getBegin());
-      nSent.setEnd(sentArray.get(sentArray.size() - 1).getEnd());
-      nSent.addToIndexes();
-      //System.out.println("New NGram added");
-    }
-    
-    
-    while(sIterator.hasNext()){
+
+    NSentence nSent = new NSentence(jCas);
+    FSList sentFSList = Utils.fromCollectionToFSList(jCas, sentArray);
+    nSent.setSentenceList(sentFSList);
+    nSent.setText(NSentString);
+    nSent.setTokenList(mergeNestedList(tokenList, jCas));
+    nSent.setPhraseList(mergeNestedList(phraseList, jCas));
+    nSent.addToIndexes();
+
+    while (index < sentNum) {
+      NSentString = NSentString.substring(sentArray.get(0).getText().length()).trim();
       sentArray.remove(0);
-      Sentence sent = (Sentence)sIterator.next();
+      tokenList.remove(0);
+      phraseList.remove(0);
+      Sentence sent = sentList.get(index);
+      NSentString = NSentString + " " + sent.getText();
       sentArray.add(sent);
-      ifNSent = true;
-      for(i = 0; i < k - 1;i++){
-        if((sentArray.get(i + 1).getBegin() - sentArray.get(i).getEnd()) > 1){
-          ifNSent = false;
-          break;
-        }
-      }
-      if(ifNSent){
-        NSentence nSent = new NSentence(jCas);
-        FSList sentList = Utils.fromCollectionToFSList(jCas,sentArray);
-        nSent.setSentenceList(sentList);
-        nSent.setBegin(sentArray.get(0).getBegin());
-        nSent.setEnd(sentArray.get(sentArray.size() - 1).getEnd());
-        nSent.addToIndexes();
-        //System.out.println("New NGram added");
-      }
+      tokenList.add(Utils.fromFSListToCollection(sent.getTokenList(), Token.class));
+      phraseList.add(Utils.fromFSListToCollection(sent.getPhraseList(), NounPhrase.class));
+      index++;
+
+      nSent = new NSentence(jCas);
+      sentFSList = Utils.fromCollectionToFSList(jCas, sentArray);
+      nSent.setSentenceList(sentFSList);
+      nSent.setText(NSentString);
+      nSent.setTokenList(mergeNestedList(tokenList, jCas));
+      nSent.setPhraseList(mergeNestedList(phraseList, jCas));
+      nSent.addToIndexes();
     }
 
   }
 
+  private <T extends Annotation> FSList mergeNestedList(List<ArrayList<T>> nestedList, JCas aJCas) {
+    Collection<T> resultList = new ArrayList<T>();
+    for (ArrayList<T> elementList : nestedList) {
+      resultList.addAll(elementList);
+    }
+    return Utils.fromCollectionToFSList(aJCas, resultList);
+  }
 }

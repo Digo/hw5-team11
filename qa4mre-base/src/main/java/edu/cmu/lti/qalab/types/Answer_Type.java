@@ -14,7 +14,7 @@ import org.apache.uima.cas.Feature;
 import org.apache.uima.jcas.tcas.Annotation_Type;
 
 /** 
- * Updated by JCasGen Tue Nov 12 11:36:42 EST 2013
+ * Updated by JCasGen Wed Nov 13 11:09:42 EST 2013
  * @generated */
 public class Answer_Type extends Annotation_Type {
   /** @generated */
@@ -331,6 +331,61 @@ public class Answer_Type extends Annotation_Type {
     ll_cas.ll_setRefValue(addr, casFeatCode_reconNERList, v);}
     
   
+ 
+  /** @generated */
+  final Feature casFeat_baselineScore;
+  /** @generated */
+  final int     casFeatCode_baselineScore;
+  /** @generated */ 
+  public int getBaselineScore(int addr) {
+        if (featOkTst && casFeat_baselineScore == null)
+      jcas.throwFeatMissing("baselineScore", "edu.cmu.lti.qalab.types.Answer");
+    return ll_cas.ll_getRefValue(addr, casFeatCode_baselineScore);
+  }
+  /** @generated */    
+  public void setBaselineScore(int addr, int v) {
+        if (featOkTst && casFeat_baselineScore == null)
+      jcas.throwFeatMissing("baselineScore", "edu.cmu.lti.qalab.types.Answer");
+    ll_cas.ll_setRefValue(addr, casFeatCode_baselineScore, v);}
+    
+   /** @generated */
+  public double getBaselineScore(int addr, int i) {
+        if (featOkTst && casFeat_baselineScore == null)
+      jcas.throwFeatMissing("baselineScore", "edu.cmu.lti.qalab.types.Answer");
+    if (lowLevelTypeChecks)
+      return ll_cas.ll_getDoubleArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_baselineScore), i, true);
+    jcas.checkArrayBounds(ll_cas.ll_getRefValue(addr, casFeatCode_baselineScore), i);
+  return ll_cas.ll_getDoubleArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_baselineScore), i);
+  }
+   
+  /** @generated */ 
+  public void setBaselineScore(int addr, int i, double v) {
+        if (featOkTst && casFeat_baselineScore == null)
+      jcas.throwFeatMissing("baselineScore", "edu.cmu.lti.qalab.types.Answer");
+    if (lowLevelTypeChecks)
+      ll_cas.ll_setDoubleArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_baselineScore), i, v, true);
+    jcas.checkArrayBounds(ll_cas.ll_getRefValue(addr, casFeatCode_baselineScore), i);
+    ll_cas.ll_setDoubleArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_baselineScore), i, v);
+  }
+ 
+ 
+  /** @generated */
+  final Feature casFeat_PMIscore;
+  /** @generated */
+  final int     casFeatCode_PMIscore;
+  /** @generated */ 
+  public double getPMIscore(int addr) {
+        if (featOkTst && casFeat_PMIscore == null)
+      jcas.throwFeatMissing("PMIscore", "edu.cmu.lti.qalab.types.Answer");
+    return ll_cas.ll_getDoubleValue(addr, casFeatCode_PMIscore);
+  }
+  /** @generated */    
+  public void setPMIscore(int addr, double v) {
+        if (featOkTst && casFeat_PMIscore == null)
+      jcas.throwFeatMissing("PMIscore", "edu.cmu.lti.qalab.types.Answer");
+    ll_cas.ll_setDoubleValue(addr, casFeatCode_PMIscore, v);}
+    
+  
 
 
 
@@ -403,6 +458,14 @@ public class Answer_Type extends Annotation_Type {
  
     casFeat_reconNERList = jcas.getRequiredFeatureDE(casType, "reconNERList", "uima.cas.FSList", featOkTst);
     casFeatCode_reconNERList  = (null == casFeat_reconNERList) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_reconNERList).getCode();
+
+ 
+    casFeat_baselineScore = jcas.getRequiredFeatureDE(casType, "baselineScore", "uima.cas.DoubleArray", featOkTst);
+    casFeatCode_baselineScore  = (null == casFeat_baselineScore) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_baselineScore).getCode();
+
+ 
+    casFeat_PMIscore = jcas.getRequiredFeatureDE(casType, "PMIscore", "uima.cas.Double", featOkTst);
+    casFeatCode_PMIscore  = (null == casFeat_PMIscore) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_PMIscore).getCode();
 
   }
 }
