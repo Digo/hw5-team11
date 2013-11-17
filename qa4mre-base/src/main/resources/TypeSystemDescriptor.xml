@@ -27,7 +27,7 @@
 				<name>edu.cmu.cs.deiis.types.SemanticRole</name>
 				<description>An ASSERT predicate-target-argument annotation. See the
 					Feature attribute to find out more.</description>
-				<supertypeName>uima.tcas.Annotation</supertypeName>
+				<supertypeName>edu.cmu.cs.deiis.types.Annotation</supertypeName>
 				<features>
 					<featureDescription>
 						<name>Label</name>
@@ -52,11 +52,6 @@
 						<description/>
 						<rangeTypeName>uima.cas.FSArray</rangeTypeName>
 						<elementType>edu.cmu.cs.deiis.types.SemanticRole</elementType>
-					</featureDescription>
-					<featureDescription>
-						<name>ComponentID</name>
-						<description/>
-						<rangeTypeName>uima.cas.String</rangeTypeName>
 					</featureDescription>
 				</features>
 			</typeDescription>
@@ -109,6 +104,12 @@
           <description/>
           <rangeTypeName>uima.cas.FSList</rangeTypeName>
           <elementType>edu.cmu.lti.qalab.types.NER</elementType>
+        </featureDescription>
+      <featureDescription>
+          <name>srlArray</name>
+          <description>Sematic Role Labels related to this sentence</description>
+          <rangeTypeName>uima.cas.FSArray</rangeTypeName>
+          <elementType>edu.cmu.cs.deiis.types.SemanticRole</elementType>
         </featureDescription>
       </features>
     </typeDescription>

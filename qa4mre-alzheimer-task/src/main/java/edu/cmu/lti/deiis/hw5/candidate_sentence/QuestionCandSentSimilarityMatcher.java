@@ -1,6 +1,7 @@
 package edu.cmu.lti.deiis.hw5.candidate_sentence;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -10,9 +11,12 @@ import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.jcas.JCas;
+import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.cas.FSList;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.uimafit.util.JCasUtil;
 
+import edu.cmu.cs.deiis.types.SemanticRole;
 import edu.cmu.lti.oaqa.core.provider.solr.SolrWrapper;
 import edu.cmu.lti.qalab.types.CandidateSentence;
 import edu.cmu.lti.qalab.types.NER;
@@ -57,6 +61,8 @@ public class QuestionCandSentSimilarityMatcher extends JCasAnnotator_ImplBase {
     String testDocId = testDoc.getId();
     ArrayList<Sentence> sentenceList = Utils.getSentenceListFromTestDocCAS(aJCas);
     ArrayList<QuestionAnswerSet> qaSet = Utils.getQuestionAnswerSetFromTestDocCAS(aJCas);
+
+	//srlSanityCheck(aJCas);
 
     for (int i = 0; i < qaSet.size(); i++) {
 
@@ -117,6 +123,33 @@ public class QuestionCandSentSimilarityMatcher extends JCasAnnotator_ImplBase {
       // System.out.println("=========================================================");
     }
 
+  }
+
+
+  private void srlSanityCheck(JCas aJCas) {
+    Collection<Sentence> sentList = JCasUtil.select(aJCas, Sentence.class);
+    for (Sentence sent : sentList) {
+      System.out.println(sent.getText());
+      FSArray srlArr = sent.getSrlArray();
+      if (srlArr == null) {
+        System.out.println(">>> Can not find any Semantic Roles in this sentence.");
+      } else {
+        Collection<SemanticRole> srlList = JCasUtil.select(sent.getSrlArray(), SemanticRole.class);
+        for (SemanticRole sr : srlList) {
+          int beginInSent = sr.getBegin() - sent.getBegin();
+          int endInSent = sr.getEnd() - sent.getBegin();
+
+          System.out.println("Phrase:\"" + sent.getText().substring(beginInSent, endInSent)
+                  + "\" label:" + sr.getLabel());
+
+          SemanticRole parent = sr.getParent();
+          if (parent != null) {
+            System.out.println("`--> parent label:" + parent.getLabel());
+          }
+          // System.out.println(sr.getChildren());
+        }
+      }
+    }
   }
 
   public String formSolrQuery(Question question) {
