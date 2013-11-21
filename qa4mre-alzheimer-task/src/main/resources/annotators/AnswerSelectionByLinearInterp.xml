@@ -20,7 +20,7 @@
       <nameValuePair>
         <name>SCORE_THR</name>
         <value>
-          <float>0.1</float>
+          <float>0.01</float>
         </value>
       </nameValuePair>
     </configurationParameterSettings>

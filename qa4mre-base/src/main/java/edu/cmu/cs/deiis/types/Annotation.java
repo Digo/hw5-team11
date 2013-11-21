@@ -10,8 +10,8 @@ import org.apache.uima.jcas.cas.TOP_Type;
 
 
 /** Extend uima.tcas.Annotation by adding componentId field
- * Updated by JCasGen Wed Nov 13 11:09:42 EST 2013
- * XML source: /Users/xiaohua/git/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
+ * Updated by JCasGen Sun Nov 17 16:43:04 EST 2013
+ * XML source: /home/diwang/deiis/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
  * @generated */
 public class Annotation extends org.apache.uima.jcas.tcas.Annotation {
   /** @generated
