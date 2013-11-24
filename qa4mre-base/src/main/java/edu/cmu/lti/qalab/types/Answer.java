@@ -15,7 +15,7 @@ import org.apache.uima.jcas.cas.DoubleArray;
 
 
 /** 
- * Updated by JCasGen Sun Nov 17 16:43:04 EST 2013
+ * Updated by JCasGen Thu Nov 21 15:57:28 EST 2013
  * XML source: /home/diwang/deiis/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
  * @generated */
 public class Answer extends Annotation {
@@ -404,6 +404,24 @@ public class Answer extends Annotation {
     if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_PMIscore == null)
       jcasType.jcas.throwFeatMissing("PMIscore", "edu.cmu.lti.qalab.types.Answer");
     jcasType.ll_cas.ll_setDoubleValue(addr, ((Answer_Type)jcasType).casFeatCode_PMIscore, v);}    
+   
+    
+  //*--------------*
+  //* Feature: finalScore
+
+  /** getter for finalScore - gets stores the final score that combined baseline scores and PMI scores
+   * @generated */
+  public double getFinalScore() {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_finalScore == null)
+      jcasType.jcas.throwFeatMissing("finalScore", "edu.cmu.lti.qalab.types.Answer");
+    return jcasType.ll_cas.ll_getDoubleValue(addr, ((Answer_Type)jcasType).casFeatCode_finalScore);}
+    
+  /** setter for finalScore - sets stores the final score that combined baseline scores and PMI scores 
+   * @generated */
+  public void setFinalScore(double v) {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_finalScore == null)
+      jcasType.jcas.throwFeatMissing("finalScore", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.ll_cas.ll_setDoubleValue(addr, ((Answer_Type)jcasType).casFeatCode_finalScore, v);}    
   }
 
     

@@ -1,6 +1,9 @@
 package edu.cmu.lti.deiis.hw5.answer_selection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.apache.uima.UimaContext;
@@ -36,40 +39,38 @@ public class AnswerSelectionByLinearInterp extends JCasAnnotator_ImplBase {
     int total = 0;
     int unanswered = 0;
     for (int i = 0; i < qaSet.size(); i++) {
-      System.out.println("Processing Question" + i);
+      System.out.println("Processing Question No." + (i+1));
       Question question = qaSet.get(i).getQuestion();
       System.out.println("Question: " + question.getText());
       System.out.println("Candidate Answer" + "\t" + "finalScore");
       ArrayList<Answer> choiceList = Utils.fromFSListToCollection(qaSet.get(i).getAnswerList(),
               Answer.class);
-      double maxScore = Double.NEGATIVE_INFINITY;
-      int maxIndex = 0;
-      int correctIndex = 0;
-      String correct = "";
+      
       for (int j = 0; j < choiceList.size(); j++) {
         Answer candAnswer = choiceList.get(j);
         DoubleArray baselineScore = candAnswer.getBaselineScore();
         double PMIScore = candAnswer.getPMIscore();
         double finalScore = getFinalScore(baselineScore, PMIScore);
-        System.out.println(candAnswer.getText() + "\t" + finalScore);
-        if (finalScore > maxScore) {
-          maxScore = finalScore;
-          maxIndex = j;
-        }
-        if (candAnswer.getIsCorrect()) {
-          correctIndex = j;
-          correct = candAnswer.getText();
-        }
+        candAnswer.setFinalScore(finalScore);
       }
-      if (maxIndex == correctIndex) {
+      
+      Collections.sort(choiceList, new AnswerFinalScoreComparator());
+      Answer topAnswer = choiceList.get(0);
+      if (topAnswer.getIsCorrect()){
         matched++;
       }
       
-      if (maxScore < SCORE_THR) {
+      //XXX unanswered and matched at same time?
+      if (topAnswer.getFinalScore() < SCORE_THR) {
         unanswered++;
       }
+      
+      for (Answer candAns : choiceList) {
+        System.out.println(candAns.getText() + "\t" + candAns.getFinalScore() + "\t"
+                + (candAns.getIsCorrect() ? "(gold standard)" : ""));
+      }
+
       total++;
-      System.out.println("Correct answer:" + correct);
       System.out.println("================================================");
     }
 
@@ -86,10 +87,15 @@ public class AnswerSelectionByLinearInterp extends JCasAnnotator_ImplBase {
   private double getFinalScore(DoubleArray baselineScore, double PMIScore) {
     double result = 0;
 
+    if (baselineScore.size() < 6){
+      System.err.println("ERROR: 6 > baselineScore.size() = " + baselineScore.size());
+      return PMIScore;
+    }
+    
     result += baselineScore.get(0) * 0.2 + baselineScore.get(1) * 0.1 + baselineScore.get(2) * 0.1
             + baselineScore.get(3) * 0.1 + baselineScore.get(4) * 0.1 + baselineScore.get(5) * 0.1
             + PMIScore * 0.3;
-
+    
     return result;
   }
 

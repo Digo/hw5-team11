@@ -14,7 +14,7 @@ import org.apache.uima.cas.Feature;
 import org.apache.uima.jcas.tcas.Annotation_Type;
 
 /** 
- * Updated by JCasGen Sun Nov 17 16:43:04 EST 2013
+ * Updated by JCasGen Thu Nov 21 15:57:28 EST 2013
  * @generated */
 public class Answer_Type extends Annotation_Type {
   /** @generated */
@@ -386,6 +386,24 @@ public class Answer_Type extends Annotation_Type {
     ll_cas.ll_setDoubleValue(addr, casFeatCode_PMIscore, v);}
     
   
+ 
+  /** @generated */
+  final Feature casFeat_finalScore;
+  /** @generated */
+  final int     casFeatCode_finalScore;
+  /** @generated */ 
+  public double getFinalScore(int addr) {
+        if (featOkTst && casFeat_finalScore == null)
+      jcas.throwFeatMissing("finalScore", "edu.cmu.lti.qalab.types.Answer");
+    return ll_cas.ll_getDoubleValue(addr, casFeatCode_finalScore);
+  }
+  /** @generated */    
+  public void setFinalScore(int addr, double v) {
+        if (featOkTst && casFeat_finalScore == null)
+      jcas.throwFeatMissing("finalScore", "edu.cmu.lti.qalab.types.Answer");
+    ll_cas.ll_setDoubleValue(addr, casFeatCode_finalScore, v);}
+    
+  
 
 
 
@@ -466,6 +484,10 @@ public class Answer_Type extends Annotation_Type {
  
     casFeat_PMIscore = jcas.getRequiredFeatureDE(casType, "PMIscore", "uima.cas.Double", featOkTst);
     casFeatCode_PMIscore  = (null == casFeat_PMIscore) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_PMIscore).getCode();
+
+ 
+    casFeat_finalScore = jcas.getRequiredFeatureDE(casType, "finalScore", "uima.cas.Double", featOkTst);
+    casFeatCode_finalScore  = (null == casFeat_finalScore) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_finalScore).getCode();
 
   }
 }

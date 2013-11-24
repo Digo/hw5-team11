@@ -12,7 +12,7 @@ import org.apache.uima.jcas.tcas.Annotation;
 
 
 /** 
- * Updated by JCasGen Sun Nov 17 16:43:04 EST 2013
+ * Updated by JCasGen Thu Nov 21 15:57:28 EST 2013
  * XML source: /home/diwang/deiis/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
  * @generated */
 public class NSentence extends Annotation {

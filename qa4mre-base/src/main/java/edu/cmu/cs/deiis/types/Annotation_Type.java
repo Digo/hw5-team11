@@ -13,7 +13,7 @@ import org.apache.uima.cas.impl.FeatureImpl;
 import org.apache.uima.cas.Feature;
 
 /** Extend uima.tcas.Annotation by adding componentId field
- * Updated by JCasGen Sun Nov 17 16:43:04 EST 2013
+ * Updated by JCasGen Thu Nov 21 15:57:27 EST 2013
  * @generated */
 public class Annotation_Type extends org.apache.uima.jcas.tcas.Annotation_Type {
   /** @generated */

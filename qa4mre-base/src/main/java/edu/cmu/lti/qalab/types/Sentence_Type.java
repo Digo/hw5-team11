@@ -14,7 +14,7 @@ import org.apache.uima.cas.Feature;
 import edu.cmu.cs.deiis.types.Annotation_Type;
 
 /** 
- * Updated by JCasGen Sun Nov 17 16:43:04 EST 2013
+ * Updated by JCasGen Thu Nov 21 15:57:28 EST 2013
  * @generated */
 public class Sentence_Type extends Annotation_Type {
   /** @generated */

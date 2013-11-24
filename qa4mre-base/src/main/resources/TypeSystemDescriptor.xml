@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
   <name>typeSystemDescriptor</name>
   <description/>
@@ -343,6 +342,11 @@
         <featureDescription>
           <name>PMIscore</name>
           <description/>
+          <rangeTypeName>uima.cas.Double</rangeTypeName>
+        </featureDescription>
+      <featureDescription>
+          <name>finalScore</name>
+          <description>stores the final score that combined baseline scores and PMI scores</description>
           <rangeTypeName>uima.cas.Double</rangeTypeName>
         </featureDescription>
       </features>
