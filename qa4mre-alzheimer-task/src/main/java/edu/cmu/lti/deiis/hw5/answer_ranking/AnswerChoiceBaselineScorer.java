@@ -27,7 +27,6 @@ import edu.cmu.lti.qalab.types.NSentence;
 import edu.cmu.lti.qalab.types.NounPhrase;
 import edu.cmu.lti.qalab.types.Question;
 import edu.cmu.lti.qalab.types.QuestionAnswerSet;
-import edu.cmu.lti.qalab.types.Sentence;
 import edu.cmu.lti.qalab.types.Token;
 import edu.cmu.lti.qalab.utils.Utils;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;

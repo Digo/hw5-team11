@@ -1,0 +1,22 @@
+.metadata
+.gradle
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+
+# External tool builders
+.externalToolBuilders/
+
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear

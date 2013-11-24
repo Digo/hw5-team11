@@ -50,6 +50,7 @@ public class AnswerSelectionByLinearInterp extends JCasAnnotator_ImplBase {
         Answer candAnswer = choiceList.get(j);
         DoubleArray baselineScore = candAnswer.getBaselineScore();
         double PMIScore = candAnswer.getPMIscore();
+//        System.out.println(PMIScore);
         double finalScore = getFinalScore(baselineScore, PMIScore);
         candAnswer.setFinalScore(finalScore);
       }
@@ -94,8 +95,7 @@ public class AnswerSelectionByLinearInterp extends JCasAnnotator_ImplBase {
     
     result += baselineScore.get(0) * 0.2 + baselineScore.get(1) * 0.1 + baselineScore.get(2) * 0.1
             + baselineScore.get(3) * 0.1 + baselineScore.get(4) * 0.1 + baselineScore.get(5) * 0.1
-            + PMIScore * 0.3;
-    
+            + PMIScore * 0.8;
     return result;
   }
 
