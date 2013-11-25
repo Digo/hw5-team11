@@ -27,6 +27,7 @@ import edu.cmu.lti.qalab.types.NSentence;
 import edu.cmu.lti.qalab.types.NounPhrase;
 import edu.cmu.lti.qalab.types.Question;
 import edu.cmu.lti.qalab.types.QuestionAnswerSet;
+import edu.cmu.lti.qalab.types.Sentence;
 import edu.cmu.lti.qalab.types.Token;
 import edu.cmu.lti.qalab.utils.Utils;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -81,6 +82,7 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     // String testDocId = testDoc.getId();
     System.out.println("Calculating baseline scores...");
     ArrayList<QuestionAnswerSet> qaSet = Utils.getQuestionAnswerSetFromTestDocCAS(aJCas);
+    Collection<Sentence> sentList = JCasUtil.select(aJCas, Sentence.class);
     Collection<NSentence> nSentenceCollection = JCasUtil.select(aJCas, NSentence.class);
 //    for (NSentence nSentence: nSentenceCollection){
 //      System.out.println(nSentence.getPhraseList());
@@ -153,13 +155,16 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
           // compute similarity between each reconstructed answer and testDoc sentence
           List<Double> similarity = new ArrayList<Double>();
           for (NSentence nSentence : nSentenceCollection) {
-            
             similarity = getSim(answer, nSentence, similarity);
           }
-          DoubleArray simArray = new DoubleArray(aJCas, similarity.size());
+          DoubleArray simArray = new DoubleArray(aJCas, similarity.size() + 1);
           for (int j = 0; j < similarity.size(); j++) {
             simArray.set(j, similarity.get(j));
           }
+          
+          double srlSimScore = AnswerChoiceSemanticRoleMatcher.getSemanticRoleSim(question, answer, sentList);
+          simArray.set(similarity.size(), srlSimScore);
+          
           answer.setBaselineScore(simArray);
 //          System.out.println(simArray);
           // System.out.println("Out of stanford annotation");
@@ -295,6 +300,10 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     }
     return resultMap;
   }
+  
+  public static String reconstruct(Question quest, Answer ans) {
+    return reconstruct(quest, ans.getText());
+  }
 
   /**
    * Constructs a single sentence from a Question string and an Answer string
@@ -305,9 +314,9 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
    *          the answer text
    * @return the reconstructed sentence as a String
    */
-  public static String reconstruct(Question quest, Answer ans) {
+  public static String reconstruct(Question quest, String ans) {
     // Get text
-    String a = ans.getText();
+    String a = ans;
     String q = quest.getText().substring(0, quest.getText().length() - 1);
     q = q.replace('?', ' ').trim();
 
