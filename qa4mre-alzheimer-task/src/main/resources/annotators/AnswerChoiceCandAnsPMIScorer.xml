@@ -36,7 +36,7 @@
     <nameValuePair>
         <name>SOLR_SERVER_URL</name>
         <value>
-          <string>http://peace.isri.cs.cmu.edu:9080/solr/genomics-simple/</string>
+          <string>http://peace.isri.cs.cmu.edu:9080/solr/genomics-simple/admin/</string>
         </value>
       </nameValuePair>
     </configurationParameterSettings>     

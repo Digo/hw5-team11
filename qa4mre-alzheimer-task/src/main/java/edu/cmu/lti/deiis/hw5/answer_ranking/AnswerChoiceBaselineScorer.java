@@ -158,7 +158,7 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
           }
           DoubleArray simArray = new DoubleArray(aJCas, similarity.size());
           for (int j = 0; j < similarity.size(); j++) {
-            simArray.set(j, similarity.get(j) / nSentenceCollection.size());
+            simArray.set(j, similarity.get(j));
           }
           answer.setBaselineScore(simArray);
 //          System.out.println(simArray);
@@ -212,7 +212,9 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     try {
       for (int i = 0; i < resultList.size(); i++) {
         if (!similarity.isEmpty()) {
-          resultList.set(i, resultList.get(i) + similarity.get(i));
+          if (resultList.get(i) < similarity.get(i)) {
+            resultList.set(i, similarity.get(i));
+          }
         }
       }
     } catch (Exception e) {

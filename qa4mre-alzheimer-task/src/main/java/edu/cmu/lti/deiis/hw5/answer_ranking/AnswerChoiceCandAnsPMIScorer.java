@@ -55,7 +55,7 @@ public class AnswerChoiceCandAnsPMIScorer extends JCasAnnotator_ImplBase {
     //String testDocId = testDoc.getId();
     ArrayList<QuestionAnswerSet> qaSet = Utils
         .getQuestionAnswerSetFromTestDocCAS(aJCas);
-
+    System.out.println("Calculating PMI socres...");
     for (int i = 0; i < qaSet.size(); i++) {
 
       Question question = qaSet.get(i).getQuestion();
