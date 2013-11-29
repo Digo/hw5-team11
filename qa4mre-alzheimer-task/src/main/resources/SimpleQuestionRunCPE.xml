@@ -49,6 +49,7 @@
         <!-- <node>QuestionCandSentDependencyMatcher</node>-->
         <node>AnswerChoiceBaselineScorer</node>
         <!-- <node>AnswerChoiceCandAnsSynonymScorer</node>-->
+<!--         <node>AnswerChoiceCandAnsPMIScorer</node> -->
         <node>AnswerSelectionByLinearInterp</node>
         </fixedFlow>
     </flowConstraints>

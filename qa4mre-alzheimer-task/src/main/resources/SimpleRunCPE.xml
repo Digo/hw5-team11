@@ -64,6 +64,10 @@
       <import location="annotators/AnswerSelectionByKCandAggregation.xml"/>
     </delegateAnalysisEngine>-->
     
+    <delegateAnalysisEngine key="NSentenceAnnotator">
+      <import location="annotators/NSentenceAnnotator.xml"/>
+    </delegateAnalysisEngine>
+    
   </delegateAnalysisEngineSpecifiers>
   <analysisEngineMetaData>
     <name>CpeDescriptor</name>

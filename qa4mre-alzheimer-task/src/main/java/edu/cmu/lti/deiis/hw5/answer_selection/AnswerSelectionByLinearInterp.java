@@ -1,5 +1,6 @@
 package edu.cmu.lti.deiis.hw5.answer_selection;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,6 +24,8 @@ import edu.cmu.lti.qalab.utils.Utils;
 
 public class AnswerSelectionByLinearInterp extends JCasAnnotator_ImplBase {
   float SCORE_THR = (float) 0.1;
+  
+  ArrayList<DocumentEvaluation> docEvals = new ArrayList<AnswerSelectionByLinearInterp.DocumentEvaluation>();
   
   @Override
   public void initialize(UimaContext context) throws ResourceInitializationException {
@@ -82,22 +85,69 @@ public class AnswerSelectionByLinearInterp extends JCasAnnotator_ImplBase {
     double cAt1 = (((double) matched) / ((double) total) * unanswered + (double) matched)
             * (1.0 / total);
     System.out.println("c@1 score:" + cAt1);
+    
+
+    TestDocument srcDoc = Utils.getTestDocumentFromCAS(aJCas);
+    String docId = srcDoc.getId();
+    docEvals.add(new DocumentEvaluation(docId, cAt1, matched));
 
   }
 
   private double getFinalScore(DoubleArray baselineScore, double PMIScore) {
     double result = 0;
 
-    if (baselineScore.size() < 6){
-      System.err.println("ERROR: 6 > baselineScore.size() = " + baselineScore.size());
+    if (baselineScore == null || baselineScore.size() < 6) {
+      System.err.println("ERROR: 6 > baselineScore.size() ");
       return PMIScore;
     }
-    
-    result += baselineScore.get(0) * 0.2 + baselineScore.get(1) * 0.1 + baselineScore.get(2) * 0.1
-            + baselineScore.get(3) * 0.1 + baselineScore.get(4) * 0.1 + baselineScore.get(5) * 0.1
-            + baselineScore.get(6) * 0.01
-            + PMIScore * 0.8;
+
+    //max vector cosine, SRL
+    double[] weights = { 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.4, 0.01 };
+    for (int i = 0; i < baselineScore.size(); i++) {
+      result += baselineScore.get(i) * weights[i];
+    }
+
+    result += PMIScore * 0.8;
+
+    // result +=
+    // + baselineScore.get(0) * 0.2 + baselineScore.get(1) * 0.1 + baselineScore.get(2) * 0.1
+    // + baselineScore.get(3) * 0.1 + baselineScore.get(4) * 0.1 + baselineScore.get(5) * 0.1
+    // + baselineScore.get(6) * 0.4 //max vector cosine
+    // // + baselineScore.get(7) * 0.01 //SRL
+    // + PMIScore * 0.8
+    // ;
     return result;
   }
+  
+  static class DocumentEvaluation{
+    String docName;
+    double cAt1;
+    int corrected;
+    static final DecimalFormat df = new DecimalFormat("#.##");
+    
+    public DocumentEvaluation(String docName, double cAt1, int corrected) {
+      super();
+      this.docName = docName;
+      this.cAt1 = cAt1;
+      this.corrected = corrected;
+    }
 
+    @Override
+    public String toString() {
+      return "DocumentEvaluation [docName=" + docName + ", cAt1=" + df.format(cAt1) + ", corrected="
+              + corrected + "]";
+    }
+  }
+
+  @Override
+  public void collectionProcessComplete() throws AnalysisEngineProcessException {
+    super.collectionProcessComplete();
+    System.out.println("\nPeformance Summary: ");
+    int totalCorrect = 0;
+    for(DocumentEvaluation docEval : docEvals){
+      System.out.println(docEval.toString());
+      totalCorrect += docEval.corrected;
+    }
+    System.out.println("Total correct: "+ totalCorrect);
+  }
 }

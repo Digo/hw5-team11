@@ -5,6 +5,14 @@
 			<descriptor>
 				<import location="../collectionreaders/CollectionTestDocReaderDescriptor.xml" />
 			</descriptor>
+			<configurationParameterSettings>
+				<nameValuePair>
+					<name>INPUT_DIR</name>
+					<value>
+						<string>XMIs/dev/</string>
+					</value>
+				</nameValuePair>
+			</configurationParameterSettings>
 		</collectionIterator>
 	</collectionReader>
 	<casProcessors casPoolSize="3" processingUnitThreadCount="1">
