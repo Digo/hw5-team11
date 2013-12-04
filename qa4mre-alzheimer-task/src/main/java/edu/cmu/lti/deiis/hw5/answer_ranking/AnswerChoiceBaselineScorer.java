@@ -433,189 +433,199 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
    * @return the reconstructed sentence as a String
    */
   public static String reconstruct(Question quest, String ans) {
-    // Get text
-    String a = ans;
-    String q = quest.getText().substring(0, quest.getText().length() - 1);
-    q = q.replace('?', ' ').trim();
+      // Get text
+      String a = ans;
+      String q = quest.getText().substring(0, quest.getText().length() - 1);
+      q = q.replace('?', ' ').trim();
 
-    // Set up tokenizer
-    StringTokenizer tok = new StringTokenizer(q);
-    ArrayList<String> qwords = new ArrayList<String>();
-    while (tok.hasMoreTokens())
-      qwords.add(tok.nextToken());
-    String first = qwords.get(0);
-    String second = qwords.get(1);
+      // Set up tokenizer
+      StringTokenizer tok = new StringTokenizer(q);
+      ArrayList<String> qwords = new ArrayList<String>();
+      while(tok.hasMoreTokens())
+       qwords.add(tok.nextToken());
+      String first = qwords.get(0);
+      String second = qwords.get(1);
 
-    // Get noun phrase list
-    ArrayList<NounPhrase> qnpList = Utils.fromFSListToCollection(quest.getNounList(),
-            NounPhrase.class);
-    ArrayList<String> npList = new ArrayList<String>();
-    for (NounPhrase np : qnpList)
-      npList.add(np.getText());
-    /*
-     * System.out.println("\tNounPhrases: " + npList.size()); for(String s : npList)
-     * System.out.println("\t" + s);
-     */
+      // Get noun phrase list
+      ArrayList<NounPhrase> qnpList = Utils.fromFSListToCollection(
+              quest.getNounList(), NounPhrase.class);
+      ArrayList<String> npList = new ArrayList<String>();
+      for(NounPhrase np : qnpList)
+       npList.add(np.getText());
+      /*
+       * System.out.println("\tNounPhrases: " + npList.size()); for(String s :
+       * npList) System.out.println("\t" + s);
+       */
 
-    // QUESTION TYPE METHOD
+      // QUESTION TYPE METHOD
 
-    if (first.equals("What") && (!connectors.contains(qwords.get(1)))) {
-      // Get maximal noun phrase
-      boolean npfound = false;
-      int x = 1;
-      String noun = qwords.get(x++);
-      if (npList.contains(noun))
-        npfound = true;
-      String nextword = qwords.get(x);
-      while (((!npfound) || (npList.contains(noun + " " + nextword))) && (x < qwords.size())) {
-        noun += " " + nextword;
-        x++;
-        if ((!npfound) && (npList.contains(noun)))
-          npfound = true;
-        if (x < qwords.size())
-          nextword = qwords.get(x);
-      }// end while
+      if(first.equals("What") && (!connectors.contains(qwords.get(1)))){
+       // Get maximal noun phrase
+       boolean npfound = false;
+       int x = 1;
+       String noun = qwords.get(x++);
+       if(npList.contains(noun))
+              npfound = true;
+       String nextword = qwords.get(x);
+       while(((!npfound) || (npList.contains(noun + " " + nextword))) && (x < qwords.size())){
+              noun += " " + nextword;
+              x++;
+              if((!npfound) && (npList.contains(noun)))
+               npfound = true;
+              if(x < qwords.size())
+               nextword = qwords.get(x);
+       }// end while
+      
+       if(x < qwords.size()){
+              String verb = qwords.get(x);
+              x++;
 
-      if (x < qwords.size()) {
-        String verb = qwords.get(x);
-        x++;
+              if(!connectors.contains(verb)){
+               String rest = "";
+               for(int y = x; y < qwords.size(); y++)
+                      rest += qwords.get(y) + " ";
+               rest = rest.trim();
 
-        if (!connectors.contains(verb)) {
-          String rest = "";
-          for (int y = x; y < qwords.size(); y++)
-            rest += qwords.get(y) + " ";
-          rest = rest.trim();
-
-          String constructed = a + " " + verb + " " + rest;
-          return constructed;
-        }
+               String constructed = a + " " + verb + " " + rest;
+               return constructed;
+              }
+       }
       }
-    }
 
-    // which + noun + is / what + noun + is
-    // which, for which, in which, for what, in what
-    if (first.equals("Which") || second.equals("which") // which / in which
-            || (qwords.get(1).equals("what")) // for what / in what
-            || (first.equals("What") && !connectors.contains(qwords.get(1)))) { // what
-                                                                                // noun
-                                                                                // is
-                                                                                // ...
-      String noun = "";
+      // which + noun + is / what + noun + is
+      // which, for which, in which, for what, in what
+      if(first.equals("Which")
+              || second.equals("which") // which / in which
+              || (qwords.get(1).equals("what")) // for what / in what
+              || (first.equals("What") && !connectors.contains(qwords.get(1)))){
+       String noun = "";
 
-      // Get connecting word
-      int x = 0;
-      String word = qwords.get(x++);
-      while (!connectors.contains(word) && (x < qwords.size())) {
-        word = qwords.get(x++);
-        if (!(word.equals("which") || word.equals("Which") || word.equals("what")))
-          noun += word + " ";
+       // Get connecting word
+       int x = 0;
+       String word = qwords.get(x++);
+       while(!connectors.contains(word) && (x < qwords.size())){
+              word = qwords.get(x++);
+              if(!(word.equals("which") || word.equals("Which") || word
+                      .equals("what")))
+               noun += word + " ";
+       }
+       String connector = word;
+
+       // get rest of sentence
+       String rest = "";
+       for(int y = x; y < qwords.size(); y++)
+              rest += qwords.get(y) + " ";
+       rest = rest.trim();
+
+       // reconstruct for/in constructions
+       if(first.equals("For") || first.equals("In"))
+              connector = first.toLowerCase();
+       
+       //System.out.println("\ta: " + a + "\n\tconnector: " + connector + "\n\trest: " + rest);
+
+       // construct sentence
+       String constructed;
+       if(connector.equals("do") || connector.equals("does"))
+              constructed = a + " " + rest;
+       else if(connector.equals("is") || connector.equals("are")
+               || connector.equals("was"))
+              constructed = a + " " + connector + " " + rest;
+       else
+              constructed = rest + " " + connector + " " + a;
+       return constructed;
+      }// end in which
+
+      // where
+      else if(first.equals("Where")){
+       String connector = qwords.get(1);
+
+       // Get maximal noun phrase
+       boolean npfound = false;
+       int x = 2;
+       String noun = qwords.get(x++);
+       if(npList.contains(noun))
+              npfound = true;
+       String nextword = qwords.get(x);
+       while(((!npfound) || (npList.contains(noun + " " + nextword)))
+               && (x < qwords.size())){
+              noun += " " + nextword;
+              x++;
+              if((!npfound) && (npList.contains(noun)))
+               npfound = true;
+              if(x < qwords.size())
+               nextword = qwords.get(x);
+       }
+       // System.out.println("Found NP: " + noun);
+
+       // Get rest of sentence
+       String rest = "";
+       for(int y = x; y < qwords.size(); y++)
+              rest += qwords.get(y) + " ";
+       rest = rest.trim();
+
+       // construct sentence
+       String constructed = noun + " " + connector + " " + rest + " in "
+               + a;
+       return constructed;
+      }// end where
+
+      // how does
+      else if(first.equals("How")
+              && (second.equals("does") || second.equals("do") || second
+                      .equals("did"))){
+       String connector = second;
+
+       // Get maximal noun phrase
+       boolean npfound = false;
+       int x = 2;
+       String noun = qwords.get(x++);
+       if(npList.contains(noun))
+              npfound = true;
+       String nextword = qwords.get(x);
+       while(((!npfound) || (npList.contains(noun + " " + nextword)))
+               && (x < qwords.size())){
+              noun += " " + nextword;
+              x++;
+              if((!npfound) && (npList.contains(noun)))
+               npfound = true;
+              if(x < qwords.size())
+               nextword = qwords.get(x);
+       }// end while
+       String verb = qwords.get(x);
+       x++;
+       if(connector.equals("does"))
+              verb += "s";
+
+       String rest = "";
+       for(int y = x; y < qwords.size(); y++)
+              rest += qwords.get(y) + " ";
+       rest = rest.trim();
+
+       String constructed = noun + " " + verb + " " + rest + " " + a;
+       return constructed;
       }
-      String connector = word;
 
-      // get rest of sentence
-      String rest = "";
-      for (int y = x; y < qwords.size(); y++)
-        rest += qwords.get(y) + " ";
-      rest = rest.trim();
+      // what is noun?
+      else if(first.equals("What")
+              && (second.equals("is") || second.equals("are") || second
+                      .equals("was"))){
+       String connector = second;
+       String rest = "";
+       for(int x = 2; x < qwords.size(); x++)
+              rest += qwords.get(x) + " ";
+       rest = rest.trim();
 
-      // reconstruct for/in constructions
-      if (first.equals("For") || first.equals("In"))
-        connector = first.toLowerCase();
+       String constructed = a + " " + connector + " " + rest;
+       return constructed;
+      }
 
-      // construct sentence
-      String constructed;
-      if (connector.equals("do") || connector.equals("does"))
-        constructed = a + " " + rest;
-      else if (connector.equals("is") || connector.equals("are") || connector.equals("was"))
-        constructed = a + " " + connector + " " + rest;
+      // what noun verbs?
+      /*
       else
-        constructed = rest + " " + connector + " " + a;
-      return constructed;
-    }// end in which
-
-    // where
-    else if (first.equals("Where")) {
-      String connector = qwords.get(1);
-
-      // Get maximal noun phrase
-      boolean npfound = false;
-      int x = 2;
-      String noun = qwords.get(x++);
-      if (npList.contains(noun))
-        npfound = true;
-      String nextword = qwords.get(x);
-      while (((!npfound) || (npList.contains(noun + " " + nextword))) && (x < qwords.size())) {
-        noun += " " + nextword;
-        x++;
-        if ((!npfound) && (npList.contains(noun)))
-          npfound = true;
-        if (x < qwords.size())
-          nextword = qwords.get(x);
-      }
-      // System.out.println("Found NP: " + noun);
-
-      // Get rest of sentence
-      String rest = "";
-      for (int y = x; y < qwords.size(); y++)
-        rest += qwords.get(y) + " ";
-      rest = rest.trim();
-
-      // construct sentence
-      String constructed = noun + " " + connector + " " + rest + " in " + a;
-      return constructed;
-    }// end where
-
-    // how does
-    else if (first.equals("How")
-            && (second.equals("does") || second.equals("do") || second.equals("did"))) {
-      String connector = second;
-
-      // Get maximal noun phrase
-      boolean npfound = false;
-      int x = 2;
-      String noun = qwords.get(x++);
-      if (npList.contains(noun))
-        npfound = true;
-      String nextword = qwords.get(x);
-      while (((!npfound) || (npList.contains(noun + " " + nextword))) && (x < qwords.size())) {
-        noun += " " + nextword;
-        x++;
-        if ((!npfound) && (npList.contains(noun)))
-          npfound = true;
-        if (x < qwords.size())
-          nextword = qwords.get(x);
-      }// end while
-      String verb = qwords.get(x);
-      x++;
-      if (connector.equals("does"))
-        verb += "s";
-
-      String rest = "";
-      for (int y = x; y < qwords.size(); y++)
-        rest += qwords.get(y) + " ";
-      rest = rest.trim();
-
-      String constructed = noun + " " + verb + " " + rest + " " + a;
-      return constructed;
-    }
-
-    // what is noun?
-    else if (first.equals("What")
-            && (second.equals("is") || second.equals("are") || second.equals("was"))) {
-      String connector = second;
-      String rest = "";
-      for (int x = 2; x < qwords.size(); x++)
-        rest += qwords.get(x) + " ";
-      rest = rest.trim();
-
-      String constructed = a + " " + connector + " " + rest;
-      return constructed;
-    }
-
-    // what noun verbs?
-
-    // NAIVE METHOD
-    return q + " " + a;
-  }// end reconstruct method
+          System.out.println("TYPE: Naive");
+  */
+      // NAIVE METHOD
+      return q + " " + a;
+    }// end reconstruct method
 
 }
