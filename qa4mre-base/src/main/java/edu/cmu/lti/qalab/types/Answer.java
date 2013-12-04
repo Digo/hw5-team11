@@ -7,6 +7,7 @@ import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.JCasRegistry;
 import org.apache.uima.jcas.cas.TOP_Type;
 
+import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.cas.FSList;
 import org.apache.uima.jcas.tcas.Annotation;
 
@@ -15,7 +16,7 @@ import org.apache.uima.jcas.cas.DoubleArray;
 
 
 /** 
- * Updated by JCasGen Thu Nov 21 15:57:28 EST 2013
+ * Updated by JCasGen Tue Dec 03 17:04:20 EST 2013
  * XML source: /home/diwang/deiis/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
  * @generated */
 public class Answer extends Annotation {
@@ -422,6 +423,40 @@ public class Answer extends Annotation {
     if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_finalScore == null)
       jcasType.jcas.throwFeatMissing("finalScore", "edu.cmu.lti.qalab.types.Answer");
     jcasType.ll_cas.ll_setDoubleValue(addr, ((Answer_Type)jcasType).casFeatCode_finalScore, v);}    
+   
+    
+  //*--------------*
+  //* Feature: maxScoredNSentences
+
+  /** getter for maxScoredNSentences - gets Record max scored NSentences for error analysis
+   * @generated */
+  public FSArray getMaxScoredNSentences() {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_maxScoredNSentences == null)
+      jcasType.jcas.throwFeatMissing("maxScoredNSentences", "edu.cmu.lti.qalab.types.Answer");
+    return (FSArray)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_maxScoredNSentences)));}
+    
+  /** setter for maxScoredNSentences - sets Record max scored NSentences for error analysis 
+   * @generated */
+  public void setMaxScoredNSentences(FSArray v) {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_maxScoredNSentences == null)
+      jcasType.jcas.throwFeatMissing("maxScoredNSentences", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.ll_cas.ll_setRefValue(addr, ((Answer_Type)jcasType).casFeatCode_maxScoredNSentences, jcasType.ll_cas.ll_getFSRef(v));}    
+    
+  /** indexed getter for maxScoredNSentences - gets an indexed value - Record max scored NSentences for error analysis
+   * @generated */
+  public NSentence getMaxScoredNSentences(int i) {
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_maxScoredNSentences == null)
+      jcasType.jcas.throwFeatMissing("maxScoredNSentences", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.jcas.checkArrayBounds(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_maxScoredNSentences), i);
+    return (NSentence)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefArrayValue(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_maxScoredNSentences), i)));}
+
+  /** indexed setter for maxScoredNSentences - sets an indexed value - Record max scored NSentences for error analysis
+   * @generated */
+  public void setMaxScoredNSentences(int i, NSentence v) { 
+    if (Answer_Type.featOkTst && ((Answer_Type)jcasType).casFeat_maxScoredNSentences == null)
+      jcasType.jcas.throwFeatMissing("maxScoredNSentences", "edu.cmu.lti.qalab.types.Answer");
+    jcasType.jcas.checkArrayBounds(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_maxScoredNSentences), i);
+    jcasType.ll_cas.ll_setRefArrayValue(jcasType.ll_cas.ll_getRefValue(addr, ((Answer_Type)jcasType).casFeatCode_maxScoredNSentences), i, jcasType.ll_cas.ll_getFSRef(v));}
   }
 
     

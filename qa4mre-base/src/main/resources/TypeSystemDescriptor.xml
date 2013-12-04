@@ -349,6 +349,12 @@
           <description>stores the final score that combined baseline scores and PMI scores</description>
           <rangeTypeName>uima.cas.Double</rangeTypeName>
         </featureDescription>
+      <featureDescription>
+          <name>maxScoredNSentences</name>
+          <description>Record max scored NSentences for error analysis</description>
+          <rangeTypeName>uima.cas.FSArray</rangeTypeName>
+          <elementType>edu.cmu.lti.qalab.types.NSentence</elementType>
+        </featureDescription>
       </features>
     </typeDescription>
     <typeDescription>

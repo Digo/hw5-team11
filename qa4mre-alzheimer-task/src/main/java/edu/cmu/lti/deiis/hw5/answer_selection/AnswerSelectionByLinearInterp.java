@@ -2,10 +2,8 @@ package edu.cmu.lti.deiis.hw5.answer_selection;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
@@ -13,10 +11,10 @@ import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.cas.DoubleArray;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.uimafit.util.JCasUtil;
 
 import edu.cmu.lti.qalab.types.Answer;
-import edu.cmu.lti.qalab.types.CandidateAnswer;
-import edu.cmu.lti.qalab.types.CandidateSentence;
+import edu.cmu.lti.qalab.types.NSentence;
 import edu.cmu.lti.qalab.types.Question;
 import edu.cmu.lti.qalab.types.QuestionAnswerSet;
 import edu.cmu.lti.qalab.types.TestDocument;
@@ -24,6 +22,8 @@ import edu.cmu.lti.qalab.utils.Utils;
 
 public class AnswerSelectionByLinearInterp extends JCasAnnotator_ImplBase {
   float SCORE_THR = (float) 0.1;
+  
+  private final boolean IS_DEBUG_MAX_NSENT = false;
   
   ArrayList<DocumentEvaluation> docEvals = new ArrayList<AnswerSelectionByLinearInterp.DocumentEvaluation>();
   
@@ -63,6 +63,14 @@ public class AnswerSelectionByLinearInterp extends JCasAnnotator_ImplBase {
       if (topAnswer.getIsCorrect()){
         matched++;
       }
+      
+      if (IS_DEBUG_MAX_NSENT){
+        Collection<NSentence> maxNSentence = JCasUtil.select(topAnswer.getMaxScoredNSentences(), NSentence.class);
+        for (NSentence nSent : maxNSentence){
+          System.out.println("MAX Sent: "+ nSent.getText());
+        }
+      }
+
       
       //XXX unanswered and matched at same time?
       if (topAnswer.getFinalScore() < SCORE_THR) {

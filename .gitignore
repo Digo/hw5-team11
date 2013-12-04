@@ -1,3 +1,4 @@
+log/
 .metadata
 .gradle
 bin/**
@@ -20,3 +21,8 @@ local.properties
 *.jar
 *.war
 *.ear
+
+
+qa4mre-alzheimer-task/XMIs/12-test-alzheimer-srl-debug/
+qa4mre-alzheimer-task/makefile
+qa4mre-base/src/main/resources/TypeSystemDescriptorStyleMap.xml

@@ -14,7 +14,7 @@ import org.apache.uima.cas.Feature;
 import org.apache.uima.jcas.tcas.Annotation_Type;
 
 /** 
- * Updated by JCasGen Thu Nov 21 15:57:28 EST 2013
+ * Updated by JCasGen Tue Dec 03 17:04:20 EST 2013
  * @generated */
 public class Answer_Type extends Annotation_Type {
   /** @generated */
@@ -404,6 +404,43 @@ public class Answer_Type extends Annotation_Type {
     ll_cas.ll_setDoubleValue(addr, casFeatCode_finalScore, v);}
     
   
+ 
+  /** @generated */
+  final Feature casFeat_maxScoredNSentences;
+  /** @generated */
+  final int     casFeatCode_maxScoredNSentences;
+  /** @generated */ 
+  public int getMaxScoredNSentences(int addr) {
+        if (featOkTst && casFeat_maxScoredNSentences == null)
+      jcas.throwFeatMissing("maxScoredNSentences", "edu.cmu.lti.qalab.types.Answer");
+    return ll_cas.ll_getRefValue(addr, casFeatCode_maxScoredNSentences);
+  }
+  /** @generated */    
+  public void setMaxScoredNSentences(int addr, int v) {
+        if (featOkTst && casFeat_maxScoredNSentences == null)
+      jcas.throwFeatMissing("maxScoredNSentences", "edu.cmu.lti.qalab.types.Answer");
+    ll_cas.ll_setRefValue(addr, casFeatCode_maxScoredNSentences, v);}
+    
+   /** @generated */
+  public int getMaxScoredNSentences(int addr, int i) {
+        if (featOkTst && casFeat_maxScoredNSentences == null)
+      jcas.throwFeatMissing("maxScoredNSentences", "edu.cmu.lti.qalab.types.Answer");
+    if (lowLevelTypeChecks)
+      return ll_cas.ll_getRefArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_maxScoredNSentences), i, true);
+    jcas.checkArrayBounds(ll_cas.ll_getRefValue(addr, casFeatCode_maxScoredNSentences), i);
+  return ll_cas.ll_getRefArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_maxScoredNSentences), i);
+  }
+   
+  /** @generated */ 
+  public void setMaxScoredNSentences(int addr, int i, int v) {
+        if (featOkTst && casFeat_maxScoredNSentences == null)
+      jcas.throwFeatMissing("maxScoredNSentences", "edu.cmu.lti.qalab.types.Answer");
+    if (lowLevelTypeChecks)
+      ll_cas.ll_setRefArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_maxScoredNSentences), i, v, true);
+    jcas.checkArrayBounds(ll_cas.ll_getRefValue(addr, casFeatCode_maxScoredNSentences), i);
+    ll_cas.ll_setRefArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_maxScoredNSentences), i, v);
+  }
+ 
 
 
 
@@ -488,6 +525,10 @@ public class Answer_Type extends Annotation_Type {
  
     casFeat_finalScore = jcas.getRequiredFeatureDE(casType, "finalScore", "uima.cas.Double", featOkTst);
     casFeatCode_finalScore  = (null == casFeat_finalScore) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_finalScore).getCode();
+
+ 
+    casFeat_maxScoredNSentences = jcas.getRequiredFeatureDE(casType, "maxScoredNSentences", "uima.cas.FSArray", featOkTst);
+    casFeatCode_maxScoredNSentences  = (null == casFeat_maxScoredNSentences) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_maxScoredNSentences).getCode();
 
   }
 }

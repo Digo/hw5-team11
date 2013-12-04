@@ -4,12 +4,16 @@
   <groupId>edu.cmu.lti.qalab</groupId>
   <artifactId>qa4mre-alzheimer-task</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <repositories>
-    <repository>
-      <id>oaqa</id>
-      <url>http://mu.lti.cs.cmu.edu:8081/nexus/content/groups/course</url>
-    </repository>
-  </repositories>
+	<repositories>
+		<repository>
+			<id>oaqa</id>
+			<url>http://mu.lti.cs.cmu.edu:8081/nexus/content/groups/course</url>
+		</repository>
+		<repository>
+			<id>ukp-oss-model-snapshots</id>
+			<url>http://zoidberg.ukp.informatik.tu-darmstadt.de/artifactory/public-ukp-snapshots-local</url>
+		</repository>
+	</repositories>
   <distributionManagement>
     <repository>
       <id>deployment</id>
@@ -56,6 +60,7 @@
       <artifactId>disco</artifactId>
       <version>1.4</version>
     </dependency>
+    
   </dependencies>
   <scm>
     <connection>scm:git:git@github.com:kar2905/qalabcmu.git</connection>

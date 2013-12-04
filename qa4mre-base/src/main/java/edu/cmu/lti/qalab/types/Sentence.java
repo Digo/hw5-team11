@@ -14,7 +14,7 @@ import edu.cmu.cs.deiis.types.Annotation;
 
 
 /** 
- * Updated by JCasGen Thu Nov 21 15:57:28 EST 2013
+ * Updated by JCasGen Tue Dec 03 17:04:21 EST 2013
  * XML source: /home/diwang/deiis/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
  * @generated */
 public class Sentence extends Annotation {

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -17,10 +18,12 @@ import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.jcas.JCas;
+import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.cas.FSList;
 import org.apache.uima.jcas.cas.TOP;
 import org.apache.uima.jcas.cas.DoubleArray;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.uimafit.util.FSCollectionFactory;
 import org.uimafit.util.JCasUtil;
 
 import edu.cmu.lti.qalab.types.Answer;
@@ -173,20 +176,43 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
           answer.setReconDependencies(fsDependencyList);
 
           // compute similarity between each reconstructed answer and testDoc sentence
-          List<Double> similarity = new ArrayList<Double>();
+          ArrayList<Double> similarity = new ArrayList<Double>();
+          ArrayList<NSentence> maxNSentences = new ArrayList<NSentence>();
+          
           for (NSentence nSentence : nSentenceCollection) {
-            similarity = getSim(answer, nSentence, similarity, idfMap);
+            ArrayList<Double> resultList = (ArrayList<Double>) getSim(answer, nSentence, idfMap);
+            try {
+              if(similarity.isEmpty()){
+                similarity = resultList;
+                for (int j = 0; j < resultList.size(); j++) {
+                  maxNSentences.add(nSentence);
+                }
+              }else{
+                for (int i1 = 0; i1 < resultList.size(); i1++) {
+                  if (resultList.get(i1) > similarity.get(i1)){
+                      similarity.set(i1, resultList.get(i1));
+                      maxNSentences.set(i1, nSentence);
+                  }
+                }
+              }
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
           }
           DoubleArray simArray = new DoubleArray(aJCas, similarity.size() + 1);
           for (int j = 0; j < similarity.size(); j++) {
             simArray.set(j, similarity.get(j));
           }
-
+                    
           double srlSimScore = 0;
           if (useSrl) {
             srlSimScore = AnswerChoiceSemanticRoleMatcher.getSemanticRoleSim(question, answer,
                     sentList);
           }
+          
+          answer.setMaxScoredNSentences((FSArray) FSCollectionFactory.createFSArray(aJCas, maxNSentences));
+          
+          //FSCollectionFactory<NSentence> nSentArrary = new FSCollectionFactory<NSentence>();
           
           simArray.set(similarity.size(), srlSimScore);
 
@@ -202,7 +228,7 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     }
   }
 
-  private List<Double> getSim(Answer answer, NSentence nSentence, List<Double> similarity, HashMap<String, Double> idfMap) {
+  private List<Double> getSim(Answer answer, NSentence nSentence, HashMap<String, Double> idfMap) {
     List<Double> resultList = new ArrayList<Double>();
     HashMap<String, Integer> answerNPCountMap = getTFMap(answer.getReconNounPhraseList(), "text");
     HashMap<String, Integer> docSentNPCountMap = getTFMap(nSentence.getPhraseList(), "text");
@@ -244,17 +270,7 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     // resultList.add(nerDiceSim);
     // resultList.add(nerJaccardSim);
 
-    try {
-      for (int i = 0; i < resultList.size(); i++) {
-        if (!similarity.isEmpty()) {
-          if (resultList.get(i) < similarity.get(i)) {
-            resultList.set(i, similarity.get(i));
-          }
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+
 
     return resultList;
   }
