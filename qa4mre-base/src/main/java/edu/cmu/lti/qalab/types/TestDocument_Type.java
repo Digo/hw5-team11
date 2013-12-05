@@ -14,7 +14,7 @@ import org.apache.uima.cas.Feature;
 
 
 /** 
- * Updated by JCasGen Tue Dec 03 17:04:21 EST 2013
+ * Updated by JCasGen Thu Dec 05 00:13:23 EST 2013
  * @generated */
 public class TestDocument_Type extends SourceDocument_Type {
   /** @generated */
@@ -97,6 +97,43 @@ public class TestDocument_Type extends SourceDocument_Type {
     ll_cas.ll_setStringValue(addr, casFeatCode_topicId, v);}
     
   
+ 
+  /** @generated */
+  final Feature casFeat_LRWeights;
+  /** @generated */
+  final int     casFeatCode_LRWeights;
+  /** @generated */ 
+  public int getLRWeights(int addr) {
+        if (featOkTst && casFeat_LRWeights == null)
+      jcas.throwFeatMissing("LRWeights", "edu.cmu.lti.qalab.types.TestDocument");
+    return ll_cas.ll_getRefValue(addr, casFeatCode_LRWeights);
+  }
+  /** @generated */    
+  public void setLRWeights(int addr, int v) {
+        if (featOkTst && casFeat_LRWeights == null)
+      jcas.throwFeatMissing("LRWeights", "edu.cmu.lti.qalab.types.TestDocument");
+    ll_cas.ll_setRefValue(addr, casFeatCode_LRWeights, v);}
+    
+   /** @generated */
+  public double getLRWeights(int addr, int i) {
+        if (featOkTst && casFeat_LRWeights == null)
+      jcas.throwFeatMissing("LRWeights", "edu.cmu.lti.qalab.types.TestDocument");
+    if (lowLevelTypeChecks)
+      return ll_cas.ll_getDoubleArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_LRWeights), i, true);
+    jcas.checkArrayBounds(ll_cas.ll_getRefValue(addr, casFeatCode_LRWeights), i);
+  return ll_cas.ll_getDoubleArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_LRWeights), i);
+  }
+   
+  /** @generated */ 
+  public void setLRWeights(int addr, int i, double v) {
+        if (featOkTst && casFeat_LRWeights == null)
+      jcas.throwFeatMissing("LRWeights", "edu.cmu.lti.qalab.types.TestDocument");
+    if (lowLevelTypeChecks)
+      ll_cas.ll_setDoubleArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_LRWeights), i, v, true);
+    jcas.checkArrayBounds(ll_cas.ll_getRefValue(addr, casFeatCode_LRWeights), i);
+    ll_cas.ll_setDoubleArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_LRWeights), i, v);
+  }
+ 
 
 
 
@@ -117,6 +154,10 @@ public class TestDocument_Type extends SourceDocument_Type {
  
     casFeat_topicId = jcas.getRequiredFeatureDE(casType, "topicId", "uima.cas.String", featOkTst);
     casFeatCode_topicId  = (null == casFeat_topicId) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_topicId).getCode();
+
+ 
+    casFeat_LRWeights = jcas.getRequiredFeatureDE(casType, "LRWeights", "uima.cas.DoubleArray", featOkTst);
+    casFeatCode_LRWeights  = (null == casFeat_LRWeights) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_LRWeights).getCode();
 
   }
 }
