@@ -13,10 +13,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class TokenVector {
+public class GTermVector {
 
   public static void main(String[] args) throws IOException {
-    TokenVector vec = new TokenVector();
+    GTermVector vec = new GTermVector();
     vec.loadModel("/usr0/home/diw1/data/alzheimer_vector.bin");
     System.out.println(vec.similarWords("Alzheimer"));
     System.out.println(vec.analogy("he", "his", "her"));

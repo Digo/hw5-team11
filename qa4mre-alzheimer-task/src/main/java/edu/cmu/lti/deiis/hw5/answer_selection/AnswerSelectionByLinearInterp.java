@@ -10,6 +10,7 @@ import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.cas.DoubleArray;
+import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.uimafit.util.JCasUtil;
 
@@ -23,7 +24,7 @@ import edu.cmu.lti.qalab.utils.Utils;
 public class AnswerSelectionByLinearInterp extends JCasAnnotator_ImplBase {
   float SCORE_THR = (float) 0.1;
   
-  private final boolean IS_DEBUG_MAX_NSENT = false;
+  private final boolean IS_DEBUG_MAX_NSENT = true;
   
   ArrayList<DocumentEvaluation> docEvals = new ArrayList<AnswerSelectionByLinearInterp.DocumentEvaluation>();
   
@@ -62,15 +63,16 @@ public class AnswerSelectionByLinearInterp extends JCasAnnotator_ImplBase {
       Answer topAnswer = choiceList.get(0);
       if (topAnswer.getIsCorrect()){
         matched++;
-      }
-      
-      if (IS_DEBUG_MAX_NSENT){
-        Collection<NSentence> maxNSentence = JCasUtil.select(topAnswer.getMaxScoredNSentences(), NSentence.class);
-        for (NSentence nSent : maxNSentence){
-          System.out.println("MAX Sent: "+ nSent.getText());
+        if (IS_DEBUG_MAX_NSENT) {
+          DoubleArray scores = topAnswer.getBaselineScore();
+          FSArray maxNSentence = topAnswer.getMaxScoredNSentences();
+          
+          for (int j = 0; j < maxNSentence.size(); j++) {
+            System.out.println("MAX Sent: " + j + "\t" + scores.get(j) + "\t"
+                    + ((NSentence)maxNSentence.get(j)).getText());
+          }
         }
       }
-
       
       //XXX unanswered and matched at same time?
       if (topAnswer.getFinalScore() < SCORE_THR) {

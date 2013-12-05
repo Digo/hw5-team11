@@ -60,9 +60,9 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
 
   Tagger abnerTagger = null;
 
-  private TokenVector tokenVector;
+  private GTermVector tokenVector;
   
-  boolean useWordVector = false;
+  boolean useWordVector = true;
   boolean useSrl = false;
 
   @Override
@@ -88,9 +88,10 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
 
     
     if (useWordVector) {
-      tokenVector = new TokenVector();
+      tokenVector = new GTermVector();
       try {
         tokenVector.loadModel("/usr0/home/diw1/data/alzheimer_vector.bin");
+//        tokenVector.loadModel("/usr0/home/diw1/data/genomics_vector.bin");
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -209,14 +210,10 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
             srlSimScore = AnswerChoiceSemanticRoleMatcher.getSemanticRoleSim(question, answer,
                     sentList);
           }
+          simArray.set(similarity.size(), srlSimScore);
+          answer.setBaselineScore(simArray);
           
           answer.setMaxScoredNSentences((FSArray) FSCollectionFactory.createFSArray(aJCas, maxNSentences));
-          
-          //FSCollectionFactory<NSentence> nSentArrary = new FSCollectionFactory<NSentence>();
-          
-          simArray.set(similarity.size(), srlSimScore);
-
-          answer.setBaselineScore(simArray);
           // System.out.println(simArray);
           // System.out.println("Out of stanford annotation");
         } catch (Exception e) {
@@ -338,6 +335,10 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
         }
       }
 
+//      if(maxSim < 0.3){
+//        continue;
+//      }
+      
       double swIdf = getIdf(idfMap, maxWord2, 1);
       double awIdf = getIdf(idfMap, tokenString, swIdf);
       score += maxSim * maxSimConut * count * swIdf * awIdf;

@@ -24,6 +24,11 @@
       <url>http://mu.lti.cs.cmu.edu:8081/nexus/content/repositories/course-snapshots</url>
     </snapshotRepository>
   </distributionManagement>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
   <dependencies>
     <dependency>
       <groupId>edu.cmu.lti.qalab</groupId>
