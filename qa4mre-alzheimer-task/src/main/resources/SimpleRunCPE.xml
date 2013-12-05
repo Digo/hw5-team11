@@ -85,13 +85,10 @@
         <node>StanfordQuestionNLPAnnotator</node>
         <node>PhraseAnnotator</node>
         <node>QuestionPhraseAnnotator</node>
-        <node>NSentenceAnnotator</node>
         <node>NEAnnotator</node>
         <node>QuestionNEAnnotator</node>
-        <!-- <node>SynonymAnnotator</node>-->
-        <!-- <node>QASynonymAnnotator</node>-->
         <node>SolrIndexer</node>
-<!--         <node>QuestionCandSentSimilarityMatcher</node> -->
+        <!--         <node>QuestionCandSentSimilarityMatcher</node> -->
         <!-- <node>QuestionCandSentSynonymMatcher</node> -->        
         <!-- <node>QuestionCandSentDependencyMatcher</node>-->
 <!--         <node>AnswerChoiceCandAnsSimilarityScorer</node> -->

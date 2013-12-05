@@ -61,8 +61,9 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
   Tagger abnerTagger = null;
 
   private GTermVector tokenVector;
-  
-  boolean useWordVector = true;
+
+  boolean useWordVector = false;
+
   boolean useSrl = false;
 
   @Override
@@ -86,12 +87,10 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     stanfordAnnotator = new StanfordCoreNLP(props);
     abnerTagger = new Tagger(Tagger.BIOCREATIVE);
 
-    
     if (useWordVector) {
       tokenVector = new GTermVector();
       try {
         tokenVector.loadModel("/usr0/home/diw1/data/alzheimer_vector.bin");
-//        tokenVector.loadModel("/usr0/home/diw1/data/genomics_vector.bin");
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -106,9 +105,9 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     ArrayList<QuestionAnswerSet> qaSet = Utils.getQuestionAnswerSetFromTestDocCAS(aJCas);
     Collection<Sentence> sentList = JCasUtil.select(aJCas, Sentence.class);
     Collection<NSentence> nSentenceCollection = JCasUtil.select(aJCas, NSentence.class);
-    
+
     HashMap<String, Double> idfMap = getIDFMap(aJCas);
-    
+
     // for (NSentence nSentence: nSentenceCollection){
     // System.out.println(nSentence.getPhraseList());
     // }
@@ -117,9 +116,11 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     // System.out.println(sentence.getText());
     // }
 
-    // Collection<NSentence> NSentenceList = JCasUtil.select(aJCas, NSentence.class);
+    // Collection<NSentence> NSentenceList = JCasUtil.select(aJCas,
+    // NSentence.class);
     // for (NSentence nSentence: NSentenceList) {
-    // for (Sentence sentence: Utils.fromFSListToCollection(nSentence.getSentenceList(),
+    // for (Sentence sentence:
+    // Utils.fromFSListToCollection(nSentence.getSentenceList(),
     // Sentence.class)) {
     // System.out.println(sentence.getText());
     // }
@@ -135,7 +136,7 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
       for (Answer answer : choiceList) {
         try {
           String recon = reconstruct(question, answer);
-          // System.out.println(recon);
+          System.out.println(recon);
           answer.setReconText(recon);
 
           String nerTagged = abnerTagger.tagABNER(recon);
@@ -169,30 +170,32 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
           answer.setReconTokenList(fsTokenList);
           answer.setReconNounPhraseList(fsPhraseList);
 
-          // this is the Stanford dependency graph of the reconstructed answer
+          // this is the Stanford dependency graph of the
+          // reconstructed answer
           SemanticGraph dependencies = annotatedSent
                   .get(CollapsedCCProcessedDependenciesAnnotation.class);
           List<SemanticGraphEdge> depList = dependencies.edgeListSorted();
           FSList fsDependencyList = Utils.createDependencyList(aJCas, depList);
           answer.setReconDependencies(fsDependencyList);
 
-          // compute similarity between each reconstructed answer and testDoc sentence
+          // compute similarity between each reconstructed answer and
+          // testDoc sentence
           ArrayList<Double> similarity = new ArrayList<Double>();
           ArrayList<NSentence> maxNSentences = new ArrayList<NSentence>();
-          
+
           for (NSentence nSentence : nSentenceCollection) {
             ArrayList<Double> resultList = (ArrayList<Double>) getSim(answer, nSentence, idfMap);
             try {
-              if(similarity.isEmpty()){
+              if (similarity.isEmpty()) {
                 similarity = resultList;
                 for (int j = 0; j < resultList.size(); j++) {
                   maxNSentences.add(nSentence);
                 }
-              }else{
+              } else {
                 for (int i1 = 0; i1 < resultList.size(); i1++) {
-                  if (resultList.get(i1) > similarity.get(i1)){
-                      similarity.set(i1, resultList.get(i1));
-                      maxNSentences.set(i1, nSentence);
+                  if (resultList.get(i1) > similarity.get(i1)) {
+                    similarity.set(i1, resultList.get(i1));
+                    maxNSentences.set(i1, nSentence);
                   }
                 }
               }
@@ -204,16 +207,22 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
           for (int j = 0; j < similarity.size(); j++) {
             simArray.set(j, similarity.get(j));
           }
-                    
+
           double srlSimScore = 0;
           if (useSrl) {
             srlSimScore = AnswerChoiceSemanticRoleMatcher.getSemanticRoleSim(question, answer,
                     sentList);
           }
+
+          answer.setMaxScoredNSentences((FSArray) FSCollectionFactory.createFSArray(aJCas,
+                  maxNSentences));
+
+          // FSCollectionFactory<NSentence> nSentArrary = new
+          // FSCollectionFactory<NSentence>();
+
           simArray.set(similarity.size(), srlSimScore);
+
           answer.setBaselineScore(simArray);
-          
-          answer.setMaxScoredNSentences((FSArray) FSCollectionFactory.createFSArray(aJCas, maxNSentences));
           // System.out.println(simArray);
           // System.out.println("Out of stanford annotation");
         } catch (Exception e) {
@@ -233,11 +242,15 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     HashMap<String, Integer> answerTokenCountMap = getTFMap(answer.getReconTokenList(), "text");
     HashMap<String, Integer> docSentTokenCountMap = getTFMap(nSentence.getTokenList(), "text");
 
-    // HashMap<String, Integer> answerDepCountMap = getTFMap(answer.getReconDependencies());
-    // HashMap<String, Integer> docSentDepCountMap = getTFMap(docSentence.getDependencyList());
+    // HashMap<String, Integer> answerDepCountMap =
+    // getTFMap(answer.getReconDependencies());
+    // HashMap<String, Integer> docSentDepCountMap =
+    // getTFMap(docSentence.getDependencyList());
 
-    // HashMap<String, Integer> answerNERCountMap = getTFMap(answer.getReconNERList(), "tag");
-    // HashMap<String, Integer> docSentNERCountMap = getTFMap(docSentence.getNerList(), "tag");
+    // HashMap<String, Integer> answerNERCountMap =
+    // getTFMap(answer.getReconNERList(), "tag");
+    // HashMap<String, Integer> docSentNERCountMap =
+    // getTFMap(docSentence.getNerList(), "tag");
 
     double npCosineSim = getCosine(answerNPCountMap, docSentNPCountMap);
     double npDiceSim = getDice(answerNPCountMap, docSentNPCountMap);
@@ -253,21 +266,20 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     resultList.add(tokenDiceSim);
     resultList.add(tokenJaccardSim);
 
-    if (useWordVector){
+    if (useWordVector) {
       resultList.add(getMaxVectorCosine(answerTokenCountMap, docSentTokenCountMap, idfMap));
-    }else{
+    } else {
       resultList.add(0.0);
     }
-    
 
-    // double nerCosineSim = getCosine(answerNERCountMap, docSentNERCountMap);
+    // double nerCosineSim = getCosine(answerNERCountMap,
+    // docSentNERCountMap);
     // double nerDiceSim = getDice(answerNERCountMap, docSentNERCountMap);
-    // double nerJaccardSim = getJaccard(answerNERCountMap, docSentNERCountMap);
+    // double nerJaccardSim = getJaccard(answerNERCountMap,
+    // docSentNERCountMap);
     // resultList.add(nerCosineSim);
     // resultList.add(nerDiceSim);
     // resultList.add(nerJaccardSim);
-
-
 
     return resultList;
   }
@@ -312,7 +324,8 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     return score / Math.sqrt(getLength(tfMap1) * getLength(tfMap2));
   }
 
-  private double getMaxVectorCosine(HashMap<String, Integer> ansTfMap, HashMap<String, Integer> sentTfMap, HashMap<String, Double> idfMap) {
+  private double getMaxVectorCosine(HashMap<String, Integer> ansTfMap,
+          HashMap<String, Integer> sentTfMap, HashMap<String, Double> idfMap) {
     if (ansTfMap.isEmpty() || sentTfMap.isEmpty()) {
       return 0;
     }
@@ -321,7 +334,8 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     for (Entry<String, Integer> entry : ansTfMap.entrySet()) {
       String tokenString = entry.getKey();
       Integer count = entry.getValue();
-      //score += tokenVector.maxCosineSimilarity(tokenString, tfMap2.keySet());
+      // score += tokenVector.maxCosineSimilarity(tokenString,
+      // tfMap2.keySet());
 
       double maxSim = 0;
       double maxSimConut = 1;
@@ -335,18 +349,14 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
         }
       }
 
-//      if(maxSim < 0.3){
-//        continue;
-//      }
-      
       double swIdf = getIdf(idfMap, maxWord2, 1);
       double awIdf = getIdf(idfMap, tokenString, swIdf);
       score += maxSim * maxSimConut * count * swIdf * awIdf;
       // score += maxSim;
     }
-    
+
     return score / (getLength(ansTfMap) + getLength(sentTfMap));
-    /// Math.sqrt(getLength(ansTfMap) * getLength(sentTfMap));
+    // / Math.sqrt(getLength(ansTfMap) * getLength(sentTfMap));
   }
 
   private double getLength(Map<String, Integer> bag) {
@@ -386,7 +396,7 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     Collection<Sentence> sentList = JCasUtil.select(jCas, Sentence.class);
     for (Sentence sent : sentList) {
       HashSet<String> sentTokenSet = new HashSet<String>();
-      if (sent.getTokenList() == null){
+      if (sent.getTokenList() == null) {
         continue;
       }
       Collection<Token> tokens = JCasUtil.select(sent.getTokenList(), Token.class);
@@ -410,12 +420,12 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     }
     return idfMap;
   }
-  
-  double getIdf(HashMap<String, Double> idfMap, String term, double backoff){
-    if (idfMap.containsKey(term)){
+
+  double getIdf(HashMap<String, Double> idfMap, String term, double backoff) {
+    if (idfMap.containsKey(term)) {
       return idfMap.get(term);
-    }else{
-      //System.err.println( "no idf:" + term );
+    } else {
+      // System.err.println( "no idf:" + term );
       return backoff;
     }
   }
@@ -497,10 +507,7 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     // which, for which, in which, for what, in what
     if (first.equals("Which") || second.equals("which") // which / in which
             || (qwords.get(1).equals("what")) // for what / in what
-            || (first.equals("What") && !connectors.contains(qwords.get(1)))) { // what
-                                                                                // noun
-                                                                                // is
-                                                                                // ...
+            || (first.equals("What") && !connectors.contains(qwords.get(1)))) {
       String noun = "";
 
       // Get connecting word
@@ -522,6 +529,9 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
       // reconstruct for/in constructions
       if (first.equals("For") || first.equals("In"))
         connector = first.toLowerCase();
+
+      // System.out.println("\ta: " + a + "\n\tconnector: " + connector +
+      // "\n\trest: " + rest);
 
       // construct sentence
       String constructed;
@@ -578,14 +588,15 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
       if (npList.contains(noun))
         npfound = true;
       String nextword = qwords.get(x);
-      while (((!npfound) || (npList.contains(noun + " " + nextword))) && (x < qwords.size())) {
+      while (npfound && (npList.contains(noun + " " + nextword)) && (x < qwords.size())) {
         noun += " " + nextword;
         x++;
-        if ((!npfound) && (npList.contains(noun)))
-          npfound = true;
         if (x < qwords.size())
           nextword = qwords.get(x);
+        else
+          npfound = false;
       }// end while
+
       String verb = qwords.get(x);
       x++;
       if (connector.equals("does"))
@@ -598,7 +609,54 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
 
       String constructed = noun + " " + verb + " " + rest + " " + a;
       return constructed;
-    }
+    }// end how does
+
+    // How many
+    else if (first.equals("How") && second.equals("many")) {
+
+      // Get maximal noun phrase
+      boolean npfound = false;
+      int x = 2;
+      String noun = qwords.get(x++);
+      if (npList.contains(noun))
+        npfound = true;
+      String nextword = qwords.get(x);
+      while (npfound && (npList.contains(noun + " " + nextword)) && (x < qwords.size())) {
+        noun += " " + nextword;
+        x++;
+        if (x < qwords.size())
+          nextword = qwords.get(x);
+        else
+          npfound = false;
+      }// end while
+
+      String connector = qwords.get(x);
+      x++;
+
+      String rest = "";
+      for (int y = x; y < qwords.size(); y++)
+        rest += qwords.get(y) + " ";
+      rest = rest.trim();
+
+      String constructed = "";
+      if (rest.length() > 0) {
+        int index = 0;
+        if (rest.lastIndexOf(' ') > 0)
+          index = rest.lastIndexOf(' ');
+        String lastword = rest.substring(index + 1);
+        if (lastword.equals("have")) {
+          if (connector.equals("does"))
+            constructed = rest.substring(0, index) + " has " + a + " " + noun;
+          else
+            constructed = rest.substring(0, index) + " have " + a + " " + noun;
+        } else
+          constructed = a + " " + noun + " " + rest;
+      } else
+        // How many noun connector rest?
+        constructed = a + " " + noun + " " + rest;
+
+      return constructed;
+    }// end how many
 
     // what is noun?
     else if (first.equals("What")
@@ -614,7 +672,9 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     }
 
     // what noun verbs?
-
+    /*
+     * else System.out.println("TYPE: Naive");
+     */
     // NAIVE METHOD
     return q + " " + a;
   }// end reconstruct method

@@ -4,37 +4,16 @@
   <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
   <primitive>false</primitive>
   <delegateAnalysisEngineSpecifiers>
-    <delegateAnalysisEngine key="AnswerChoiceCandAnsPMIScorer">
-      <import location="annotators/AnswerChoiceCandAnsPMIScorer.xml"/>
-    </delegateAnalysisEngine>
-    <delegateAnalysisEngine key="AnswerSelectionByKCandAggregation">
-      <import location="annotators/AnswerSelectionByKCandAggregation.xml"/>
-    </delegateAnalysisEngine>
-    <delegateAnalysisEngine key="AnswerSelectionByKCandVoting">
-      <import location="annotators/AnswerSelectionByKCandVoting.xml"/>
-    </delegateAnalysisEngine>
-    <delegateAnalysisEngine key="QuestionCandSentSimilarityMatcher">
-      <import location="annotators/QuestionCandSentSimilarityMatcher.xml"/>
-    </delegateAnalysisEngine>
-    <!-- <delegateAnalysisEngine key="AnswerChoiceCandAnsSynonymScorer">
-      <import location="annotators/AnswerChoiceCandAnsSynonymScorer.xml"/>
-    </delegateAnalysisEngine>
-    <delegateAnalysisEngine key="QuestionCandSentSynonymMatcher">
-      <import location="annotators/QuestionCandSentSynonymMatcher.xml"/>
-    </delegateAnalysisEngine>-->
-    <!-- <delegateAnalysisEngine key="QuestionCandSentDependencyMatcher">
-      <import location="annotators/QuestionCandSentDependencyMatcher.xml"/>
-    </delegateAnalysisEngine>-->
-    <delegateAnalysisEngine key="AnswerChoiceCandAnsSimilarityScorer">
-      <import location="annotators/AnswerChoiceCandAnsSimilarityScorer.xml"/>
-    </delegateAnalysisEngine>
-  <delegateAnalysisEngine key="AnswerSelectionByLinearInterp">
-      <import name="annotators.AnswerSelectionByLinearInterp"/>
-    </delegateAnalysisEngine>
     <delegateAnalysisEngine key="AnswerChoiceBaselineScorer">
       <import name="annotators.AnswerChoiceBaselineScorer"/>
     </delegateAnalysisEngine>
-  </delegateAnalysisEngineSpecifiers>
+    <delegateAnalysisEngine key="NSentenceAnnotator">
+      <import name="annotators.NSentenceAnnotator"/>
+    </delegateAnalysisEngine>
+    <delegateAnalysisEngine key="WeightLearningByLRDescriptor">
+      <import name="annotators.WeightLearningByLRDescriptor"/>
+    </delegateAnalysisEngine>
+    </delegateAnalysisEngineSpecifiers>
   <analysisEngineMetaData>
     <name>CpeQuestionDescriptor</name>
     <description/>
@@ -44,13 +23,13 @@
     <configurationParameterSettings/>
     <flowConstraints>
       <fixedFlow>
-        <node>QuestionCandSentSimilarityMatcher</node>
+        <node>NSentenceAnnotator</node>
         <!-- <node>QuestionCandSentSynonymMatcher</node>-->
         <!-- <node>QuestionCandSentDependencyMatcher</node>-->
         <node>AnswerChoiceBaselineScorer</node>
         <!-- <node>AnswerChoiceCandAnsSynonymScorer</node>-->
 <!--         <node>AnswerChoiceCandAnsPMIScorer</node> -->
-        <node>AnswerSelectionByLinearInterp</node>
+        <node>WeightLearningByLRDescriptor</node>
         </fixedFlow>
     </flowConstraints>
     <typePriorities/>

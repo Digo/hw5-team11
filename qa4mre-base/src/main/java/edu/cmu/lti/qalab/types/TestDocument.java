@@ -10,9 +10,12 @@ import org.apache.uima.jcas.cas.TOP_Type;
 import org.apache.uima.jcas.cas.FSList;
 
 
+import org.apache.uima.jcas.cas.DoubleArray;
+
+
 /** 
- * Updated by JCasGen Tue Dec 03 17:04:21 EST 2013
- * XML source: /home/diwang/deiis/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
+ * Updated by JCasGen Thu Dec 05 00:13:23 EST 2013
+ * XML source: /Users/xiaohua/git/hw5-team11/qa4mre-base/src/main/resources/TypeSystemDescriptor.xml
  * @generated */
 public class TestDocument extends SourceDocument {
   /** @generated
@@ -114,6 +117,40 @@ public class TestDocument extends SourceDocument {
     if (TestDocument_Type.featOkTst && ((TestDocument_Type)jcasType).casFeat_topicId == null)
       jcasType.jcas.throwFeatMissing("topicId", "edu.cmu.lti.qalab.types.TestDocument");
     jcasType.ll_cas.ll_setStringValue(addr, ((TestDocument_Type)jcasType).casFeatCode_topicId, v);}    
+   
+    
+  //*--------------*
+  //* Feature: LRWeights
+
+  /** getter for LRWeights - gets 
+   * @generated */
+  public DoubleArray getLRWeights() {
+    if (TestDocument_Type.featOkTst && ((TestDocument_Type)jcasType).casFeat_LRWeights == null)
+      jcasType.jcas.throwFeatMissing("LRWeights", "edu.cmu.lti.qalab.types.TestDocument");
+    return (DoubleArray)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((TestDocument_Type)jcasType).casFeatCode_LRWeights)));}
+    
+  /** setter for LRWeights - sets  
+   * @generated */
+  public void setLRWeights(DoubleArray v) {
+    if (TestDocument_Type.featOkTst && ((TestDocument_Type)jcasType).casFeat_LRWeights == null)
+      jcasType.jcas.throwFeatMissing("LRWeights", "edu.cmu.lti.qalab.types.TestDocument");
+    jcasType.ll_cas.ll_setRefValue(addr, ((TestDocument_Type)jcasType).casFeatCode_LRWeights, jcasType.ll_cas.ll_getFSRef(v));}    
+    
+  /** indexed getter for LRWeights - gets an indexed value - 
+   * @generated */
+  public double getLRWeights(int i) {
+    if (TestDocument_Type.featOkTst && ((TestDocument_Type)jcasType).casFeat_LRWeights == null)
+      jcasType.jcas.throwFeatMissing("LRWeights", "edu.cmu.lti.qalab.types.TestDocument");
+    jcasType.jcas.checkArrayBounds(jcasType.ll_cas.ll_getRefValue(addr, ((TestDocument_Type)jcasType).casFeatCode_LRWeights), i);
+    return jcasType.ll_cas.ll_getDoubleArrayValue(jcasType.ll_cas.ll_getRefValue(addr, ((TestDocument_Type)jcasType).casFeatCode_LRWeights), i);}
+
+  /** indexed setter for LRWeights - sets an indexed value - 
+   * @generated */
+  public void setLRWeights(int i, double v) { 
+    if (TestDocument_Type.featOkTst && ((TestDocument_Type)jcasType).casFeat_LRWeights == null)
+      jcasType.jcas.throwFeatMissing("LRWeights", "edu.cmu.lti.qalab.types.TestDocument");
+    jcasType.jcas.checkArrayBounds(jcasType.ll_cas.ll_getRefValue(addr, ((TestDocument_Type)jcasType).casFeatCode_LRWeights), i);
+    jcasType.ll_cas.ll_setDoubleArrayValue(jcasType.ll_cas.ll_getRefValue(addr, ((TestDocument_Type)jcasType).casFeatCode_LRWeights), i, v);}
   }
 
     
