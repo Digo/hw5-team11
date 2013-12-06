@@ -1,4 +1,4 @@
-package edu.cmu.lti.deiis.hw5.annotators;
+package edu.cmu.lti.deiis.hw5.casconsumers;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,7 +23,9 @@ import org.xml.sax.SAXException;
 import edu.cmu.lti.qalab.types.Answer;
 import edu.cmu.lti.qalab.types.Question;
 import edu.cmu.lti.qalab.types.QuestionAnswerSet;
+import edu.cmu.lti.qalab.types.SourceDocument;
 import edu.cmu.lti.qalab.types.TestDocument;
+import edu.cmu.lti.qalab.utils.Utils;
 
 public class OutputRunCasConsumer extends CasConsumer_ImplBase {
 
@@ -150,18 +152,19 @@ public class OutputRunCasConsumer extends CasConsumer_ImplBase {
 
 		FSIterator<Annotation> it = jcas.getAnnotationIndex().iterator();
 		StringBuffer sb = new StringBuffer();
-		int testId=1;
 		while (it.hasNext()) {
 			Annotation an = (it.next());
 			// System.out.println(an);
 
 			if (an instanceof TestDocument) {
 				TestDocument doc = (TestDocument) an;
-				doc.setReadingTestId(String.valueOf(testId));
-				testId++;
-				//TBD: get reading-test id, such as r_id = doc.getReadingTestId()
-				System.out.println(doc.getReadingTestId());
-				out.write(String.format("\t<reading-test r_id=\"%d\">\n", Integer.parseInt(doc.getReadingTestId())));
+
+        //XXX unsafe processing: use d_id as r_id
+		    SourceDocument srcDoc = Utils.getSourceDocumentFromCAS(jcas);
+		    String[] docIdParts = srcDoc.getId().split("_");
+		    String r_id = docIdParts[2];
+		    
+				out.write(String.format("\t<reading-test r_id=\"%d\">\n", Integer.parseInt(r_id)));
 				
 				FSList list = doc.getQaList();
 				boolean answered = false;

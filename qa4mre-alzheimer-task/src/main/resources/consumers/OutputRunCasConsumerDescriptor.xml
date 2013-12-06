@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><casConsumerDescription xmlns="http://uima.apache.org/resourceSpecifier">
   <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
-  <implementationName>edu.cmu.lti.deiis.hw5.annotators.OutputRunCasConsumer</implementationName>
+  <implementationName>edu.cmu.lti.deiis.hw5.casconsumers.OutputRunCasConsumer</implementationName>
   <processingResourceMetaData>
     <name>CasConsumerDescriptor</name>
     <description/>
