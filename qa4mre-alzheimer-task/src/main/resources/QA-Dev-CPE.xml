@@ -9,7 +9,7 @@
 				<nameValuePair>
 					<name>INPUT_DIR</name>
 					<value>
-						<string>XMIs/dev/</string>
+						<string>XMIs/training-output/</string>
 					</value>
 				</nameValuePair>
 			</configurationParameterSettings>

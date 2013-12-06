@@ -136,7 +136,7 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
       for (Answer answer : choiceList) {
         try {
           String recon = reconstruct(question, answer);
-          System.out.println(recon);
+          //System.out.println(recon);
           answer.setReconText(recon);
 
           String nerTagged = abnerTagger.tagABNER(recon);

@@ -14,18 +14,23 @@ import edu.cmu.lti.qalab.types.QuestionAnswerSet;
 import edu.cmu.lti.qalab.types.TestDocument;
 import edu.cmu.lti.qalab.utils.Utils;
 
-public class WeightLearningByLR extends JCasAnnotator_ImplBase {
+public class WeightLearningByLR extends AnswerSelection {
 
-//  static final int L = 1; // smoothing magnitude
+  // static final int L = 1; // smoothing magnitude
 
-//  static final int Y_CLASSES = 2; // number of values Y can take
+  // static final int Y_CLASSES = 2; // number of values Y can take
 
   static final float ETA = (float) 0.01; // step size of Logistic Regression
 
   static final float EPSILON = (float) 0.001; // precision of convergence
 
   ArrayList<ArrayList<Double>> trainingData;
+
   ArrayList<TestDocument> docs;
+
+  private double[] weights = new double[] { 3.4708793350154825, -0.881359321840623,
+      -0.6367513770427619, 0.4708463624050479, 2.749908764025542, 1.9461820446807363, 0.0, 0.0,
+      -3.401788242323787 };
 
   @Override
   public void initialize(UimaContext context) throws ResourceInitializationException {
@@ -36,17 +41,13 @@ public class WeightLearningByLR extends JCasAnnotator_ImplBase {
 
   @Override
   public void process(JCas aJCas) throws AnalysisEngineProcessException {
+    super.process(aJCas);
+
     TestDocument testDoc = Utils.getTestDocumentFromCAS(aJCas);
-    
+
     ArrayList<QuestionAnswerSet> qaSet = Utils.fromFSListToCollection(testDoc.getQaList(),
             QuestionAnswerSet.class);
     loadData(qaSet, trainingData);
-    int featureNum = trainingData.get(0).size() - 1;
-    testDoc.setLRWeights(new DoubleArray(aJCas, featureNum));
-    docs.add(testDoc);
-    
-//    System.out.println("Best weights:");
-//    System.out.println(weights.toString());
   }
 
   private double[] doIteration(ArrayList<ArrayList<Double>> trainingData, double[] weights) {
@@ -67,6 +68,12 @@ public class WeightLearningByLR extends JCasAnnotator_ImplBase {
   // computation of estimated P(Y=1)
   private static double pXY(ArrayList<Double> dataInstance, double[] weights) {
     double sum = 0;
+
+    if (dataInstance == null) {
+      // for "none of above"
+      return 0;
+    }
+
     for (int i = 0; i < weights.length; i++) {
       sum += dataInstance.get(i) * weights[i];
     }
@@ -75,26 +82,16 @@ public class WeightLearningByLR extends JCasAnnotator_ImplBase {
 
   private void loadData(ArrayList<QuestionAnswerSet> qaSet, ArrayList<ArrayList<Double>> data) {
     for (int i = 0; i < qaSet.size(); i++) {
-//      System.out.println("Processing Question No." + (i + 1));
+      // System.out.println("Processing Question No." + (i + 1));
       ArrayList<Answer> choiceList = Utils.fromFSListToCollection(qaSet.get(i).getAnswerList(),
               Answer.class);
       for (int j = 0; j < choiceList.size(); j++) {
         Answer candAnswer = choiceList.get(j);
-        if (candAnswer.getText().equals("None of the above")) {
+        ArrayList<Double> instance = getInstance(candAnswer);
+        if (instance == null) {
           continue;
         } else {
-          DoubleArray baselineScore = candAnswer.getBaselineScore();
-          Double[] doubleArray = ArrayUtils.toObject(baselineScore.toArray());
-          ArrayList<Double> dataInstance = new ArrayList<Double>();
-          dataInstance.addAll(Arrays.asList(doubleArray));
-          dataInstance.add((double) 1);
-
-          if (candAnswer.getIsCorrect()) {
-            dataInstance.add((double) 1);
-          } else {
-            dataInstance.add((double) 0);
-          }
-          data.add(dataInstance);
+          data.add(instance);
         }
       }
     }
@@ -112,7 +109,35 @@ public class WeightLearningByLR extends JCasAnnotator_ImplBase {
       return false;
   }
 
+  private ArrayList<Double> getInstance(Answer candAnswer) {
+    if (candAnswer.getText().equals("None of the above")) {
+      return null;
+    } else {
+      DoubleArray baselineScore = candAnswer.getBaselineScore();
+      Double[] doubleArray = ArrayUtils.toObject(baselineScore.toArray());
+      ArrayList<Double> dataInstance = new ArrayList<Double>();
+      dataInstance.addAll(Arrays.asList(doubleArray));
+      dataInstance.add((double) 1);
+
+      if (candAnswer.getIsCorrect()) {
+        dataInstance.add((double) 1);
+      } else {
+        dataInstance.add((double) 0);
+      }
+      return dataInstance;
+    }
+  }
+
+  @Override
+  double getFinalScore(Answer candAnswer) {
+    ArrayList<Double> instance = getInstance(candAnswer);
+    return pXY(instance, weights);
+  }
+
+  @Override
   public void collectionProcessComplete() throws AnalysisEngineProcessException {
+    super.collectionProcessComplete();
+
     int featureNum = trainingData.get(0).size() - 1;
     double[] weights = new double[featureNum];
     double[] tmpWeights = doIteration(trainingData, weights);
@@ -122,18 +147,6 @@ public class WeightLearningByLR extends JCasAnnotator_ImplBase {
       }
       tmpWeights = doIteration(trainingData, weights);
     }
-    System.out.println(Arrays.toString(weights));
-//    for (int i = 0; i < docs.size(); i++) {
-//      for (int j = 0; j < featureNum; j++) {
-//        docs.get(i).getLRWeights().set(j, weights[j]);
-//      }
-//    }
-////    System.out.println("Best weights (last term is the contant)");
-//    System.out.println(Arrays.toString(weights));
-//    System.out.println("Probabilities of each answer being correct:");
-//    for (int i = 0; i < trainingData.size(); i ++) {
-//      System.out.println(pXY(trainingData.get(i),weights));
-//    }
-//    System.out.println("Done!");
+    System.out.println("weight: " + Arrays.toString(weights));
   }
 }
