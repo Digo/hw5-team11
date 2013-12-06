@@ -17,7 +17,8 @@ public class GTermVector {
 
   public static void main(String[] args) throws IOException {
     GTermVector vec = new GTermVector();
-    vec.loadModel("/usr0/home/diw1/data/alzheimer_vector.bin");
+//    vec.loadModel("/usr0/home/diw1/data/alzheimer_vector.bin");
+    vec.loadModel("/usr0/home/diw1/data/genomics_vector.bin");
     System.out.println(vec.similarWords("Alzheimer"));
     System.out.println(vec.analogy("he", "his", "her"));
   }

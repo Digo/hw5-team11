@@ -47,30 +47,40 @@ public abstract class AnswerSelection extends JCasAnnotator_ImplBase{
       ArrayList<Answer> choiceList = Utils.fromFSListToCollection(qaSet.get(i).getAnswerList(),
               Answer.class);
       
+      Answer noneOfAbove = null;
       for (int j = 0; j < choiceList.size(); j++) {
         Answer candAnswer = choiceList.get(j);
         double finalScore = getFinalScore(candAnswer);
         candAnswer.setFinalScore(finalScore);
+        if (candAnswer.getText().equals("None of the above")){
+          noneOfAbove = candAnswer;
+        }
       }
       
       Collections.sort(choiceList, new AnswerFinalScoreComparator());
       Answer topAnswer = choiceList.get(0);
-      if (topAnswer.getIsCorrect()){
-        matched++;
-        if (IS_DEBUG_MAX_NSENT) {
-          DoubleArray scores = topAnswer.getBaselineScore();
-          FSArray maxNSentence = topAnswer.getMaxScoredNSentences();
-          
-          for (int j = 0; j < maxNSentence.size(); j++) {
-            System.out.println("MAX Sent: " + j + "\t" + scores.get(j) + "\t"
-                    + ((NSentence)maxNSentence.get(j)).getText());
-          }
+      if (topAnswer.getFinalScore() < SCORE_THR) {
+        if (noneOfAbove != null){
+          noneOfAbove.setIsSelected(true);
         }
+        unanswered++;
+      }else{
+        topAnswer.setIsSelected(true);
       }
       
-      //XXX unanswered and matched at same time?
-      if (topAnswer.getFinalScore() < SCORE_THR) {
-        unanswered++;
+      for(Answer ans : choiceList){
+        if(ans.getIsCorrect() && ans.getIsSelected()){
+          matched++;
+          if (IS_DEBUG_MAX_NSENT) {
+            DoubleArray scores = topAnswer.getBaselineScore();
+            FSArray maxNSentence = topAnswer.getMaxScoredNSentences();
+            
+            for (int j = 0; j < maxNSentence.size(); j++) {
+              System.out.println("MAX Sent: " + j + "\t" + scores.get(j) + "\t"
+                      + ((NSentence)maxNSentence.get(j)).getText());
+            }
+          }
+        }
       }
       
       for (Answer candAns : choiceList) {

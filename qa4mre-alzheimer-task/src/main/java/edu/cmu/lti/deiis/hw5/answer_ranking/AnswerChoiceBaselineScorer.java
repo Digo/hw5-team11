@@ -62,7 +62,7 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
 
   private GTermVector tokenVector;
 
-  boolean useWordVector = false;
+  boolean useWordVector = true;
 
   boolean useSrl = false;
 
@@ -90,7 +90,8 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     if (useWordVector) {
       tokenVector = new GTermVector();
       try {
-        tokenVector.loadModel("/usr0/home/diw1/data/alzheimer_vector.bin");
+        //tokenVector.loadModel("/usr0/home/diw1/data/alzheimer_vector.bin");
+        tokenVector.loadModel("/usr0/home/diw1/data/genomics_vector.bin");
       } catch (IOException e) {
         e.printStackTrace();
       }
