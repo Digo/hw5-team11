@@ -22,7 +22,7 @@ import edu.cmu.lti.qalab.utils.Utils;
 public abstract class AnswerSelection extends JCasAnnotator_ImplBase{
  
   private final boolean IS_DEBUG_MAX_NSENT = false;
-  float SCORE_THR = (float) 0.2;
+  float SCORE_THR = (float) 0.25;
   ArrayList<DocumentEvaluation> docEvals = new ArrayList<AnswerSelectionByLinearInterp.DocumentEvaluation>();
   
   @Override
@@ -103,7 +103,7 @@ public abstract class AnswerSelection extends JCasAnnotator_ImplBase{
 
     TestDocument srcDoc = Utils.getTestDocumentFromCAS(aJCas);
     String docId = srcDoc.getId();
-    docEvals.add(new DocumentEvaluation(docId, cAt1, matched, total));
+    docEvals.add(new DocumentEvaluation(docId, cAt1, matched, unanswered, total));
 
   }
   
@@ -130,21 +130,23 @@ public abstract class AnswerSelection extends JCasAnnotator_ImplBase{
     String docName;
     double cAt1;
     int corrected;
+    int unanswered;
     int total;
     static final DecimalFormat df = new DecimalFormat("#.##");
     
-    public DocumentEvaluation(String docName, double cAt1, int corrected, int total) {
+    public DocumentEvaluation(String docName, double cAt1, int corrected, int unanswered, int total) {
       super();
       this.docName = docName;
       this.cAt1 = cAt1;
       this.corrected = corrected;
+      this.unanswered = unanswered;
       this.total = total;
     }
 
     @Override
     public String toString() {
-      return "DocumentEvaluation [docName=" + docName + ", cAt1=" + df.format(cAt1) + ", corrected="
-              + corrected + "/" + total + "]";
+      return "DocumentEvaluation [docName=" + docName + ", cAt1=" + cAt1 + ", corrected="
+              + corrected + ", unanswered=" + unanswered + ", total=" + total + "]";
     }
   }
 }

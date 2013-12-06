@@ -27,7 +27,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/DataExpansion"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/NEAL-type-system"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

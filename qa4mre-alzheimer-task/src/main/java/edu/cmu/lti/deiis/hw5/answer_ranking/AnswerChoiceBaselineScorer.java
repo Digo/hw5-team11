@@ -62,7 +62,7 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
 
   private GTermVector tokenVector;
 
-  boolean useWordVector = true;
+  boolean useWordVector = false;
 
   boolean useSrl = false;
 
