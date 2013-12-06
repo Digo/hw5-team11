@@ -28,9 +28,9 @@ public class WeightLearningByLR extends AnswerSelection {
 
   ArrayList<TestDocument> docs;
 
-  private double[] weights = new double[] { 3.4708793350154825, -0.881359321840623,
-      -0.6367513770427619, 0.4708463624050479, 2.749908764025542, 1.9461820446807363, 0.0, 0.0,
-      -3.401788242323787 };
+  private double[] weights = new double[] { 3.8314593520155467, -1.0025888266796763,
+      -0.7632613316167572, 0.661848719252655, 2.020545273029166, 1.4984092249587118,
+      1.3626076194333434, 0.0, -3.726978261892141 };
 
   @Override
   public void initialize(UimaContext context) throws ResourceInitializationException {
