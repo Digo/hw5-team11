@@ -131,11 +131,11 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
       // System.out.println("========================================================");
       Question question = qaSet.get(i).getQuestion();
       // System.out.println("Question: " + question.getText());
-      ArrayList<Answer> choiceList = Utils.fromFSListToCollection(qaSet.get(i).getAnswerList(),
+      ArrayList<Answer> choiceList1 = Utils.fromFSListToCollection(qaSet.get(i).getAnswerList(),
               Answer.class);
 
       //Remove Bad Answers
-      choiceList = removeBadAnswers(question, choiceList);
+      ArrayList<Answer> choiceList = removeBadAnswers(question, choiceList1);
 
       //Sentence Reconstruction
       for (Answer answer : choiceList) {
@@ -435,8 +435,60 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     }
   }
 
-  public static ArrayList<Answer> removeBadAnswers(Question q, ArrayList<Answer> alist){
+  public static ArrayList<Answer> removeBadAnswers(Question quest, ArrayList<Answer> alist){
+      ArrayList<Answer> goodAnswers = new ArrayList<Answer>();
+      
+      String q = quest.getText().substring(0, quest.getText().length() - 1);
+      q = q.replace('?', ' ').trim();
+      StringTokenizer tok = new StringTokenizer(q);
+      ArrayList<String> qwords = new ArrayList<String>();
+      while (tok.hasMoreTokens())
+        qwords.add(tok.nextToken());
+      String first = qwords.get(0);
+      String second = qwords.get(1);
+      
+      //loop through answers
+      for(Answer a : alist){
+	  String answer = a.getText();
+      
+	  if(first.equals("How") && second.equals("many")){
+	      if(isaNumber(answer))
+		  goodAnswers.add(a);
+	      else System.err.println("Removed ans: " + answer);
+	  }
+	  else if(first.equals("Which")){
+	      if(!isaNumber(answer))
+		  goodAnswers.add(a);
+	      else System.err.println("Removed ans: " + answer);
+	  }
+	  else if(first.equals("What") 
+		  && !(second.equals("number") || second.equals("amount") || second.equals("proportion")) ){
+	      if(!isaNumber(answer))
+		  goodAnswers.add(a);
+	      else System.err.println("Removed ans: " + answer);
+	  }
+	  else
+	      goodAnswers.add(a);
+      }
+      
       return alist;
+  }
+  
+  /** Checks to see if a string contains a number
+   * @param text The string to check
+   * @return true if the string contains a number, false otherwise
+   */
+  public static boolean isaNumber(String text){
+      if(text.contains("%"))
+	  return false;
+      else if(text.contains("hundred") || text.contains("million")
+	      || (text.matches("[ \t\n\f\r]*[0-9][ \t\n\f\r]*")) ){
+	  if(text.matches(".*[a-zA-z\\-][0-9]"))
+	      return false;
+	  else return true;
+      }
+      else
+	  return false;
   }
 
   /** Wrapper reconstruct method
