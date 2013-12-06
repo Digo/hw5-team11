@@ -134,6 +134,10 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
       ArrayList<Answer> choiceList = Utils.fromFSListToCollection(qaSet.get(i).getAnswerList(),
               Answer.class);
 
+      //Remove Bad Answers
+      choiceList = removeBadAnswers(question, choiceList);
+
+      //Sentence Reconstruction
       for (Answer answer : choiceList) {
         try {
           String recon = reconstruct(question, answer);
@@ -431,6 +435,15 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     }
   }
 
+  public static ArrayList<Answer> removeBadAnswers(Question q, ArrayList<Answer> alist){
+      return alist;
+  }
+
+  /** Wrapper reconstruct method
+   * @param quest The Question object for the set
+   * @param ans The Answer object for the set
+   * @return the results of the inner reconstruct method
+   */
   public static String reconstruct(Question quest, Answer ans) {
     return reconstruct(quest, ans.getText());
   }
