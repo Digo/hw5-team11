@@ -1,5 +1,8 @@
 package edu.cmu.lti.deiis.hw5.answer_ranking;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +29,21 @@ import org.apache.uima.resource.ResourceInitializationException;
 import org.uimafit.util.FSCollectionFactory;
 import org.uimafit.util.JCasUtil;
 
+import de.tudarmstadt.ukp.wikipedia.api.*;
+import de.tudarmstadt.ukp.wikipedia.api.WikiConstants.Language;
+import de.tudarmstadt.ukp.wikipedia.api.exception.WikiApiException;
+import de.tudarmstadt.ukp.wikipedia.api.exception.WikiInitializationException;
+import dkpro.similarity.algorithms.api.SimilarityException;
+import dkpro.similarity.algorithms.api.TextSimilarityMeasure;
+import dkpro.similarity.algorithms.lexical.ngrams.WordNGramJaccardMeasure;
+import dkpro.similarity.algorithms.vsm.VectorAggregation;
+import dkpro.similarity.algorithms.vsm.VectorNorm;
+import dkpro.similarity.algorithms.vsm.store.IndexedDocumentsVectorReaderBase.WeightingModeIdf;
+import dkpro.similarity.algorithms.vsm.store.IndexedDocumentsVectorReaderBase.WeightingModeTf;
+import dkpro.similarity.algorithms.vsm.store.LuceneVectorReader;
+import dkpro.similarity.algorithms.vsm.store.vectorindex.VectorIndexReader;
+import dkpro.similarity.algorithms.vsm.*;
+import dkpro.similarity.algorithms.wikipedia.measures.JiangConrathBestComparator;
 import edu.cmu.lti.qalab.types.Answer;
 import edu.cmu.lti.qalab.types.NER;
 import edu.cmu.lti.qalab.types.NSentence;
@@ -53,6 +71,8 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
 
   // int K_CANDIDATES = 5;
   protected static ArrayList<String> connectors;
+  private static VectorIndexReader reader;
+  private static NormalizedGoogleDistanceLikeComparator ngdComparator;
 
   HashSet<String> hshStopWords = new HashSet<String>();
 
@@ -87,6 +107,8 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     stanfordAnnotator = new StanfordCoreNLP(props);
     abnerTagger = new Tagger(Tagger.BIOCREATIVE);
 
+    
+    
     if (useWordVector) {
       tokenVector = new GTermVector();
       try {
@@ -95,6 +117,25 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
       } catch (IOException e) {
         e.printStackTrace();
       }
+    }
+    
+    //set up the DKPro Score Index
+    reader = new VectorIndexReader(new File("src/main/resources/wikiIndex"));
+    ngdComparator = new NormalizedGoogleDistanceLikeComparator(reader);
+    
+    //get stop word list
+    
+    try {
+      BufferedReader stopword_Reader;    
+      stopword_Reader = new BufferedReader(new FileReader("src/main/resources/stopWord.txt"));
+      String s;
+      while((s = stopword_Reader.readLine()) != null){
+        hshStopWords.add(s);
+      }
+      stopword_Reader.close();
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
   }
 
@@ -159,6 +200,9 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
           CoreMap annotatedSent = document.get(SentencesAnnotation.class).get(0);
           for (CoreLabel token : annotatedSent.get(TokensAnnotation.class)) {
             String originalText = token.originalText();
+            if(hshStopWords.contains(originalText)){
+              continue;
+            }
             // this is the POS tag of the token
             String pos = token.get(PartOfSpeechAnnotation.class);
             // this is the NER label of the token
@@ -238,6 +282,39 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
       }
     }
   }
+  
+  private double getDkproScore(HashMap<String, Integer> tfMap1, HashMap<String, Integer> tfMap2) throws SimilarityException{
+    if (tfMap1.isEmpty() || tfMap2.isEmpty()) {
+      return 0;
+    }
+    double score = 0;
+
+   
+    for (Entry<String, Integer> entry : tfMap1.entrySet()) {
+      String tokenString = entry.getKey();
+      Integer count = entry.getValue();
+      for(Entry<String, Integer> entry2 : tfMap2.entrySet()){
+        String tokenString2 = entry2.getKey();
+        Integer count2 = entry2.getValue();
+        double simScore = ngdComparator.getSimilarity(tokenString, tokenString2);
+        if(simScore == 0){
+          continue;
+        }
+        else{
+          simScore = 1 / simScore;
+          if(count < count2){
+            score = score + simScore * count;
+          }
+          else{
+            score = score + simScore * count2;
+          }          
+        }
+      }
+    }
+    score = score / (tfMap1.size() * tfMap2.size());
+    //System.out.println("Similarity: " + score);
+    return score;
+  }
 
   private List<Double> getSim(Answer answer, NSentence nSentence, HashMap<String, Double> idfMap) {
     List<Double> resultList = new ArrayList<Double>();
@@ -246,6 +323,14 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
 
     HashMap<String, Integer> answerTokenCountMap = getTFMap(answer.getReconTokenList(), "text");
     HashMap<String, Integer> docSentTokenCountMap = getTFMap(nSentence.getTokenList(), "text");
+    
+    /*    for (Entry<String, Integer> entry : docSentTokenCountMap.entrySet()) {
+    String tokenString = entry.getKey();
+    if(hshStopWords.contains(tokenString)){
+      docSentTokenCountMap.remove(tokenString);
+    }
+  }*/
+    
 
     // HashMap<String, Integer> answerDepCountMap =
     // getTFMap(answer.getReconDependencies());
@@ -270,6 +355,10 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     resultList.add(tokenConsineSim);
     resultList.add(tokenDiceSim);
     resultList.add(tokenJaccardSim);
+    
+    //the DKPro Score
+    //double tokenDkproSim = getDkproScore(answerTokenCountMap, docSentTokenCountMap);
+    //resultList.add(tokenDkproSim);
 
     if (useWordVector) {
       resultList.add(getMaxVectorCosine(answerTokenCountMap, docSentTokenCountMap, idfMap));

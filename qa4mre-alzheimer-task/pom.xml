@@ -4,16 +4,16 @@
   <groupId>edu.cmu.lti.qalab</groupId>
   <artifactId>qa4mre-alzheimer-task</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-	<repositories>
-		<repository>
-			<id>oaqa</id>
-			<url>http://mu.lti.cs.cmu.edu:8081/nexus/content/groups/course</url>
-		</repository>
-		<repository>
-			<id>ukp-oss-model-snapshots</id>
-			<url>http://zoidberg.ukp.informatik.tu-darmstadt.de/artifactory/public-ukp-snapshots-local</url>
-		</repository>
-	</repositories>
+  <repositories>
+    <repository>
+      <id>oaqa</id>
+      <url>http://mu.lti.cs.cmu.edu:8081/nexus/content/groups/course</url>
+    </repository>
+    <repository>
+      <id>ukp-oss-model-releases</id>
+      <url>http://zoidberg.ukp.informatik.tu-darmstadt.de/artifactory/public-model-releases-local</url>
+    </repository>
+  </repositories>
   <distributionManagement>
     <repository>
       <id>deployment</id>
@@ -24,12 +24,8 @@
       <url>http://mu.lti.cs.cmu.edu:8081/nexus/content/repositories/course-snapshots</url>
     </snapshotRepository>
   </distributionManagement>
-  
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-  
   <dependencies>
+
     <dependency>
       <groupId>edu.cmu.lti.qalab</groupId>
       <artifactId>qa4mre-base</artifactId>
@@ -65,8 +61,34 @@
       <artifactId>disco</artifactId>
       <version>1.4</version>
     </dependency>
-    
+    <dependency>
+	  <groupId>dkpro.similarity</groupId>
+	  <artifactId>dkpro.similarity.algorithms.api-asl</artifactId>
+	  <version>2.0.0</version>
+	  <scope>compile</scope>
+	</dependency>
+	<dependency>
+	  <groupId>dkpro.similarity</groupId>
+	  <artifactId>dkpro.similarity.algorithms.lexical-asl</artifactId>
+	  <version>2.0.0</version>
+	  <scope>compile</scope>
+	</dependency>
+	<dependency>
+	  <groupId>dkpro.similarity</groupId>
+	  <artifactId>dkpro.similarity.algorithms.wikipedia-asl</artifactId>
+	  <version>2.0.0</version>
+	  <scope>compile</scope>
+	</dependency>
+	<dependency>
+	  <groupId>dkpro.similarity</groupId>
+	  <artifactId>dkpro.similarity.algorithms.vsm-asl</artifactId>
+	  <version>2.0.0</version>
+	  <scope>compile</scope>
+	</dependency>
+	
   </dependencies>
+  
+
   <scm>
     <connection>scm:git:git@github.com:kar2905/qalabcmu.git</connection>
     <developerConnection>scm:git:git@github.com:kar2905/qalabcmu.git</developerConnection>
@@ -97,24 +119,24 @@
           </execution>
         </executions>
       </plugin>
-      <!--<plugin>-->
-        <!--<groupId>org.codehaus.mojo</groupId>-->
-        <!--<artifactId>exec-maven-plugin</artifactId>-->
-        <!--<version>1.2.1</version>-->
-        <!--<executions>-->
-          <!--<execution>-->
-            <!--<goals>-->
-              <!--<goal>java</goal>-->
-            <!--</goals>-->
-          <!--</execution>-->
-        <!--</executions>-->
-        <!--<configuration>-->
-          <!--<mainClass>edu.cmu.lti.oaqa.ecd.driver.ECDDriver</mainClass>-->
-          <!--<arguments>-->
-            <!--<argument>qa4mre</argument>-->
-          <!--</arguments>-->
-        <!--</configuration>-->
-      <!--</plugin>-->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>edu.cmu.lti.oaqa.ecd.driver.ECDDriver</mainClass>
+          <arguments>
+            <argument>qa4mre</argument>
+          </arguments>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
