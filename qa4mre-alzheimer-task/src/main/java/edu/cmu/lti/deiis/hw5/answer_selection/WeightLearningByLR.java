@@ -20,9 +20,9 @@ public class WeightLearningByLR extends AnswerSelection {
 
   // static final int Y_CLASSES = 2; // number of values Y can take
 
-  static final float ETA = (float) 0.01; // step size of Logistic Regression
+  static final float ETA = (float) 0.005; // step size of Logistic Regression
 
-  static final float EPSILON = (float) 0.001; // precision of convergence
+  static final float EPSILON = (float) 0.0005; // precision of convergence
 
   ArrayList<ArrayList<Double>> trainingData;
 
@@ -36,6 +36,16 @@ public class WeightLearningByLR extends AnswerSelection {
       -0.928116497358416, 0.627422361266495, 2.2550598337668557, 1.6512114544847767,
       1.121563691873766, 0.0, -3.6634907964797896 };
 
+  //stop words
+//  private double[] weights = new double[] { 3.160910578554062, -0.799855622480026,
+//      -0.7215910735314368, 0.9951180416205584, 2.136732827502515, 1.0921206073440055,
+//      0.6133566363680563, 0.0, -3.2618858217365387 };
+  
+//  private double[] weights = new double[] { 4.063245343651004, -1.5186928403757662,
+//      -1.0404048926100649, 0.5731793071757492, 2.4309367397414343, 1.7667627496046086,
+//      1.075904593888227, 0.0, -3.651623089909427 };
+  
+  
   @Override
   public void initialize(UimaContext context) throws ResourceInitializationException {
     super.initialize(context);
@@ -118,6 +128,9 @@ public class WeightLearningByLR extends AnswerSelection {
       return null;
     } else {
       DoubleArray baselineScore = candAnswer.getBaselineScore();
+      if (baselineScore == null){
+        return null;
+      }
       Double[] doubleArray = ArrayUtils.toObject(baselineScore.toArray());
       ArrayList<Double> dataInstance = new ArrayList<Double>();
       dataInstance.addAll(Arrays.asList(doubleArray));

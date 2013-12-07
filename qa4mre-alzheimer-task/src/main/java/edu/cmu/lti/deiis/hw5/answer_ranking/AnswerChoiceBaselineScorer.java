@@ -74,7 +74,7 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
   private static VectorIndexReader reader;
   private static NormalizedGoogleDistanceLikeComparator ngdComparator;
 
-  HashSet<String> hshStopWords = new HashSet<String>();
+  HashSet<String> stopWordsSet = new HashSet<String>();
 
   private StanfordCoreNLP stanfordAnnotator;
 
@@ -82,9 +82,13 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
 
   private GTermVector tokenVector;
 
-  boolean useWordVector = false;
+  private static boolean useWordVector = true;
 
-  boolean useSrl = false;
+  private static boolean useSrl = false;
+  
+  private static boolean useStopWordsFilter = false;
+  
+  private static boolean useAnswerTypeFilter = false;
 
   @Override
   public void initialize(UimaContext context) throws ResourceInitializationException {
@@ -130,7 +134,7 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
       stopword_Reader = new BufferedReader(new FileReader("src/main/resources/stopWord.txt"));
       String s;
       while((s = stopword_Reader.readLine()) != null){
-        hshStopWords.add(s);
+        stopWordsSet.add(s);
       }
       stopword_Reader.close();
     } catch (Exception e) {
@@ -175,8 +179,13 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
       ArrayList<Answer> choiceList1 = Utils.fromFSListToCollection(qaSet.get(i).getAnswerList(),
               Answer.class);
 
-      //Remove Bad Answers
-      ArrayList<Answer> choiceList = removeBadAnswers(question, choiceList1);
+      ArrayList<Answer> choiceList;
+      if (useAnswerTypeFilter){
+        //Remove Bad Answers
+        choiceList = removeBadAnswers(question, choiceList1);
+      }else{
+        choiceList = choiceList1;
+      }
 
       //Sentence Reconstruction
       for (Answer answer : choiceList) {
@@ -200,9 +209,11 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
           CoreMap annotatedSent = document.get(SentencesAnnotation.class).get(0);
           for (CoreLabel token : annotatedSent.get(TokensAnnotation.class)) {
             String originalText = token.originalText();
-            if(hshStopWords.contains(originalText)){
-              continue;
-            }
+
+//            if(hshStopWords.contains(originalText)){
+//              continue;
+//            }
+            
             // this is the POS tag of the token
             String pos = token.get(PartOfSpeechAnnotation.class);
             // this is the NER label of the token
@@ -315,23 +326,43 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     //System.out.println("Similarity: " + score);
     return score;
   }
+  
+
 
   private List<Double> getSim(Answer answer, NSentence nSentence, HashMap<String, Double> idfMap) {
     List<Double> resultList = new ArrayList<Double>();
     HashMap<String, Integer> answerNPCountMap = getTFMap(answer.getReconNounPhraseList(), "text");
     HashMap<String, Integer> docSentNPCountMap = getTFMap(nSentence.getPhraseList(), "text");
 
-    HashMap<String, Integer> answerTokenCountMap = getTFMap(answer.getReconTokenList(), "text");
-    HashMap<String, Integer> docSentTokenCountMap = getTFMap(nSentence.getTokenList(), "text");
+    HashMap<String, Integer> answerTokenCountMap_tmp = getTFMap(answer.getReconTokenList(), "text");
+    HashMap<String, Integer> docSentTokenCountMap_tmp = getTFMap(nSentence.getTokenList(), "text");
     
-    /*    for (Entry<String, Integer> entry : docSentTokenCountMap.entrySet()) {
-    String tokenString = entry.getKey();
-    if(hshStopWords.contains(tokenString)){
-      docSentTokenCountMap.remove(tokenString);
+    HashMap<String, Integer> answerTokenCountMap;
+    HashMap<String, Integer> docSentTokenCountMap;
+  
+    if (useStopWordsFilter){
+      
+      answerTokenCountMap = new HashMap<String, Integer>();
+      docSentTokenCountMap = new HashMap<String, Integer>();
+    
+      for (Entry<String, Integer> entry : answerTokenCountMap_tmp.entrySet()) {
+        String tokenString = entry.getKey();
+        if (!stopWordsSet.contains(tokenString)) {
+          answerTokenCountMap.put(tokenString, entry.getValue());
+        }
+      }
+      
+      for (Entry<String, Integer> entry : docSentTokenCountMap_tmp.entrySet()) {
+        String tokenString = entry.getKey();
+        if (!stopWordsSet.contains(tokenString)) {
+          docSentTokenCountMap.put(tokenString, entry.getValue());
+        }
+      }
+    }else{
+      answerTokenCountMap = answerTokenCountMap_tmp;
+      docSentTokenCountMap = docSentTokenCountMap_tmp;
     }
-  }*/
     
-
     // HashMap<String, Integer> answerDepCountMap =
     // getTFMap(answer.getReconDependencies());
     // HashMap<String, Integer> docSentDepCountMap =
@@ -356,15 +387,21 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     resultList.add(tokenDiceSim);
     resultList.add(tokenJaccardSim);
     
-    //the DKPro Score
-    //double tokenDkproSim = getDkproScore(answerTokenCountMap, docSentTokenCountMap);
-    //resultList.add(tokenDkproSim);
-
     if (useWordVector) {
       resultList.add(getMaxVectorCosine(answerTokenCountMap, docSentTokenCountMap, idfMap));
     } else {
       resultList.add(0.0);
     }
+    
+    //the DKPro Score
+//    double tokenDkproSim;
+//    try {
+//      tokenDkproSim = getDkproScore(answerTokenCountMap, docSentTokenCountMap);
+//      resultList.add(tokenDkproSim);
+//    } catch (SimilarityException e) {
+//      e.printStackTrace();
+//      resultList.add(0.0);
+//    }
 
     // double nerCosineSim = getCosine(answerNERCountMap,
     // docSentNERCountMap);
@@ -524,60 +561,61 @@ public class AnswerChoiceBaselineScorer extends JCasAnnotator_ImplBase {
     }
   }
 
-  public static ArrayList<Answer> removeBadAnswers(Question quest, ArrayList<Answer> alist){
-      ArrayList<Answer> goodAnswers = new ArrayList<Answer>();
-      
-      String q = quest.getText().substring(0, quest.getText().length() - 1);
-      q = q.replace('?', ' ').trim();
-      StringTokenizer tok = new StringTokenizer(q);
-      ArrayList<String> qwords = new ArrayList<String>();
-      while (tok.hasMoreTokens())
-        qwords.add(tok.nextToken());
-      String first = qwords.get(0);
-      String second = qwords.get(1);
-      
-      //loop through answers
-      for(Answer a : alist){
-	  String answer = a.getText();
-      
-	  if(first.equals("How") && second.equals("many")){
-	      if(isaNumber(answer))
-		  goodAnswers.add(a);
-	      else System.err.println("Removed ans: " + answer);
-	  }
-	  else if(first.equals("Which")){
-	      if(!isaNumber(answer))
-		  goodAnswers.add(a);
-	      else System.err.println("Removed ans: " + answer);
-	  }
-	  else if(first.equals("What") 
-		  && !(second.equals("number") || second.equals("amount") || second.equals("proportion")) ){
-	      if(!isaNumber(answer))
-		  goodAnswers.add(a);
-	      else System.err.println("Removed ans: " + answer);
-	  }
-	  else
-	      goodAnswers.add(a);
-      }
-      
-      return alist;
+  public static ArrayList<Answer> removeBadAnswers(Question quest, ArrayList<Answer> alist) {
+    ArrayList<Answer> goodAnswers = new ArrayList<Answer>();
+
+    String q = quest.getText().substring(0, quest.getText().length() - 1);
+    q = q.replace('?', ' ').trim();
+    StringTokenizer tok = new StringTokenizer(q);
+    ArrayList<String> qwords = new ArrayList<String>();
+    while (tok.hasMoreTokens())
+      qwords.add(tok.nextToken());
+    String first = qwords.get(0);
+    String second = qwords.get(1);
+
+    // loop through answers
+    for (Answer a : alist) {
+      String answer = a.getText();
+
+      if (first.equals("How") && second.equals("many")) {
+        if (isaNumber(answer))
+          goodAnswers.add(a);
+        else
+          System.err.println("Removed ans: " + answer);
+      } else if (first.equals("Which")) {
+        if (!isaNumber(answer))
+          goodAnswers.add(a);
+        else
+          System.err.println("Removed ans: " + answer);
+      } else if (first.equals("What")
+              && !(second.equals("number") || second.equals("amount") || second
+                      .equals("proportion"))) {
+        if (!isaNumber(answer))
+          goodAnswers.add(a);
+        else
+          System.err.println("Removed ans: " + answer);
+      } else
+        goodAnswers.add(a);
+    }
+
+    return goodAnswers;
   }
   
   /** Checks to see if a string contains a number
    * @param text The string to check
    * @return true if the string contains a number, false otherwise
    */
-  public static boolean isaNumber(String text){
-      if(text.contains("%"))
-	  return false;
-      else if(text.contains("hundred") || text.contains("million")
-	      || (text.matches("[ \t\n\f\r]*[0-9][ \t\n\f\r]*")) ){
-	  if(text.matches(".*[a-zA-z\\-][0-9]"))
-	      return false;
-	  else return true;
-      }
+  public static boolean isaNumber(String text) {
+    if (text.contains("%"))
+      return false;
+    else if (text.contains("hundred") || text.contains("million")
+            || (text.matches("[ \t\n\f\r]*[0-9][ \t\n\f\r]*"))) {
+      if (text.matches(".*[a-zA-z\\-][0-9]"))
+        return false;
       else
-	  return false;
+        return true;
+    } else
+      return false;
   }
 
   /** Wrapper reconstruct method
