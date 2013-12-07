@@ -162,7 +162,7 @@ public class OutputRunCasConsumer extends CasConsumer_ImplBase {
         //XXX unsafe processing: use d_id as r_id
 		    SourceDocument srcDoc = Utils.getSourceDocumentFromCAS(jcas);
 		    String[] docIdParts = srcDoc.getId().split("_");
-		    String r_id = docIdParts[2];
+		    String r_id = docIdParts[docIdParts.length-1];
 		    
 				out.write(String.format("\t<reading-test r_id=\"%d\">\n", Integer.parseInt(r_id)));
 				

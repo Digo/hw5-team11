@@ -9,7 +9,8 @@
 				<nameValuePair>
 					<name>INPUT_DIR</name>
 					<value>
-						<string>XMIs/training-output/</string>
+<!-- 						<string>XMIs/training-output/</string> -->
+						<string>XMIs/12-test-alzheimer-srl/</string>
 					</value>
 				</nameValuePair>
 			</configurationParameterSettings>

@@ -22,7 +22,7 @@ import edu.cmu.lti.qalab.utils.Utils;
 public abstract class AnswerSelection extends JCasAnnotator_ImplBase{
  
   private final boolean IS_DEBUG_MAX_NSENT = false;
-  float SCORE_THR = (float) 0.25;
+  float SCORE_THR = (float) 0.1;
   ArrayList<DocumentEvaluation> docEvals = new ArrayList<AnswerSelectionByLinearInterp.DocumentEvaluation>();
   
   @Override
